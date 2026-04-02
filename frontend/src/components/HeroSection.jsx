@@ -29,7 +29,7 @@ export default function HeroSection({
 
           <h1 style={styles.heroTitle}>
             Scan your repo.<br />
-            <em style={styles.heroItalic}>Find the blast<br />radius.</em>
+            <em style={styles.heroItalic}>Find the blast radius.</em>
           </h1>
 
           <p style={styles.heroSub}>
@@ -91,21 +91,21 @@ export default function HeroSection({
         {!scanData && !loading && (
           <div style={styles.emptyRight}>
             <svg width="260" height="200" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="130" cy="40"  r="18" stroke="#2d7a4f" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.5"/>
-              <circle cx="50"  cy="130" r="14" stroke="#d69e2e" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.4"/>
-              <circle cx="210" cy="110" r="14" stroke="#dd6b20" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.4"/>
-              <circle cx="100" cy="170" r="10" stroke="#e53e3e" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.5"/>
-              <circle cx="175" cy="165" r="10" stroke="#805ad5" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.4"/>
-              <line x1="130" y1="58"  x2="60"  y2="118" stroke="#1a1a18" strokeWidth="1" opacity="0.12" strokeDasharray="3 3"/>
-              <line x1="130" y1="58"  x2="200" y2="98"  stroke="#1a1a18" strokeWidth="1" opacity="0.12" strokeDasharray="3 3"/>
-              <line x1="60"  y1="140" x2="102" y2="162" stroke="#e53e3e" strokeWidth="1.5" opacity="0.35"/>
-              <line x1="200" y1="122" x2="178" y2="157" stroke="#e53e3e" strokeWidth="1.5" opacity="0.35"/>
-              <line x1="112" y1="172" x2="167" y2="168" stroke="#1a1a18" strokeWidth="1" opacity="0.12" strokeDasharray="3 3"/>
-              <text x="118" y="45"  fontSize="10" fill="#2d7a4f" opacity="0.8" fontFamily="monospace">repo</text>
-              <text x="28"  y="135" fontSize="9"  fill="#d69e2e" opacity="0.8" fontFamily="monospace">dep</text>
-              <text x="196" y="115" fontSize="9"  fill="#dd6b20" opacity="0.8" fontFamily="monospace">ep</text>
-              <text x="82"  y="175" fontSize="9"  fill="#e53e3e" opacity="0.8" fontFamily="monospace">secret</text>
-              <text x="163" y="170" fontSize="9"  fill="#805ad5" opacity="0.8" fontFamily="monospace">vuln</text>
+              <circle cx="130" cy="40" r="18" stroke="#2d7a4f" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.5" />
+              <circle cx="50" cy="130" r="14" stroke="#d69e2e" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.4" />
+              <circle cx="210" cy="110" r="14" stroke="#dd6b20" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.4" />
+              <circle cx="100" cy="170" r="10" stroke="#e53e3e" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.5" />
+              <circle cx="175" cy="165" r="10" stroke="#805ad5" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.4" />
+              <line x1="130" y1="58" x2="60" y2="118" stroke="#1a1a18" strokeWidth="1" opacity="0.12" strokeDasharray="3 3" />
+              <line x1="130" y1="58" x2="200" y2="98" stroke="#1a1a18" strokeWidth="1" opacity="0.12" strokeDasharray="3 3" />
+              <line x1="60" y1="140" x2="102" y2="162" stroke="#e53e3e" strokeWidth="1.5" opacity="0.35" />
+              <line x1="200" y1="122" x2="178" y2="157" stroke="#e53e3e" strokeWidth="1.5" opacity="0.35" />
+              <line x1="112" y1="172" x2="167" y2="168" stroke="#1a1a18" strokeWidth="1" opacity="0.12" strokeDasharray="3 3" />
+              <text x="118" y="45" fontSize="10" fill="#2d7a4f" opacity="0.8" fontFamily="monospace">repo</text>
+              <text x="28" y="135" fontSize="9" fill="#d69e2e" opacity="0.8" fontFamily="monospace">dep</text>
+              <text x="196" y="115" fontSize="9" fill="#dd6b20" opacity="0.8" fontFamily="monospace">ep</text>
+              <text x="82" y="175" fontSize="9" fill="#e53e3e" opacity="0.8" fontFamily="monospace">secret</text>
+              <text x="163" y="170" fontSize="9" fill="#805ad5" opacity="0.8" fontFamily="monospace">vuln</text>
             </svg>
             <p style={styles.emptyHeading}>Attack paths will appear here</p>
             <p style={styles.emptyDesc}>
