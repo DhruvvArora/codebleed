@@ -19,6 +19,7 @@ from routes.security_extraction import router as security_router
 from routes.graph_build import router as graph_router
 from routes.threat_intelligence import router as threat_router
 from routes.ai_reasoning import router as ai_router
+from routes.scan import router as scan_router
 
 # Load .env for GITHUB_TOKEN etc.
 load_dotenv()
@@ -56,6 +57,7 @@ app.include_router(security_router)
 app.include_router(graph_router)
 app.include_router(threat_router)
 app.include_router(ai_router)
+app.include_router(scan_router)
 
 
 @app.get("/health", tags=["System"])
