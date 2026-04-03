@@ -80,21 +80,21 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
             face: "DM Mono, monospace",
           },
           borderWidth: isHighlighted ? 4 : 2,
-          shadow: isHighlighted
-            ? {
-              enabled: true,
-              color: SEVERITY_COLOR[n.severity] || colors.bg,
-              size: 18,
-              x: 0,
-              y: 0,
-            }
-            : {
-              enabled: true,
-              color: "rgba(0,0,0,0.25)",
-              size: 8,
-              x: 0,
-              y: 2,
-            },
+          shadow: false,
+          // ? {
+          //   enabled: true,
+          //   color: SEVERITY_COLOR[n.severity] || colors.bg,
+          //   size: 18,
+          //   x: 0,
+          //   y: 0,
+          // }
+          // : {
+          //   enabled: true,
+          //   color: "rgba(0,0,0,0.25)",
+          //   size: 8,
+          //   x: 0,
+          //   y: 2,
+          // },
           size: isHighlighted ? 34 : 24,
           shape: shapeForLabel(n.label),
           title: buildTooltip(n),
@@ -110,7 +110,8 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
           id: e.id,
           from: e.source ?? e.from,
           to: e.target ?? e.to,
-          label: e.type,
+          label: "",
+          // label: e.type,
           color: {
             color: isHighlighted ? "#2d7a4f" : "#6b6860",
             highlight: "#2d7a4f",
@@ -124,7 +125,7 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
             strokeWidth: 0,
           },
           arrows: { to: { enabled: true, scaleFactor: 0.75 } },
-          smooth: { type: "dynamic" },
+          smooth: false,
           dashes: !isHighlighted,
         };
       })
@@ -138,8 +139,8 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
         scaling: { min: 20, max: 40 },
       },
       edges: {
-        length: 260,
-        smooth: { type: "dynamic" },
+        length: 220,
+        smooth: false,
       },
       layout: {
         improvedLayout: true,
@@ -157,7 +158,7 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
         },
         stabilization: {
           enabled: true,
-          iterations: 300,
+          iterations: 80,
           updateInterval: 25,
           fit: true,
         },
@@ -187,7 +188,7 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
     networkRef.current.once("stabilized", () => {
       networkRef.current.fit({
         animation: {
-          duration: 400,
+          duration: 200,
           easingFunction: "easeInOutQuad",
         },
       });
@@ -206,7 +207,7 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
       networkRef.current?.destroy();
       networkRef.current = null;
     };
-  }, [visLoaded, scanData, selectedPathId]);
+  }, [visLoaded, scanData]);
 
   const selectedPath = scanData?.attack_paths?.find((p) => p.path_id === selectedPathId);
 
