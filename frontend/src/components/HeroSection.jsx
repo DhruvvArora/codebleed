@@ -205,9 +205,10 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     textAlign: "center",
-    gap: "40px",
+    gap: "36px",
     width: "100%",
-    maxWidth: "800px",
+    maxWidth: "1320px",
+    margin: "0 auto",
   },
 
   eyebrow: {
@@ -221,14 +222,19 @@ const styles = {
 
   heroTitle: {
     fontFamily: "'Fraunces', serif",
-    fontSize: "clamp(3.6rem, 7vw, 6.5rem)",
+    fontSize: "clamp(3rem, 5vw, 5.2rem)",
     fontWeight: 400,
-    lineHeight: 1.05,
+    lineHeight: 1.02,
     letterSpacing: "-0.03em",
     color: "#1a1a18",
     margin: 0,
   },
-  heroItalic: { fontStyle: "italic", color: "#2d7a4f" },
+  heroItalic: {
+    fontStyle: "italic",
+    color: "#2d7a4f",
+    whiteSpace: "nowrap",
+    display: "inline-block",
+  },
 
   heroSub: {
     fontSize: "clamp(1.05rem, 1.6vw, 1.3rem)",
@@ -240,8 +246,11 @@ const styles = {
 
   /* ── Input ── */
   inputBlock: {
-    display: "flex", flexDirection: "column", gap: "12px",
-    width: "100%", maxWidth: "580px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    width: "100%",
+    maxWidth: "700px",
   },
   label: {
     fontSize: "1rem", letterSpacing: "0.12em",
@@ -266,25 +275,36 @@ const styles = {
   /* ── Features — always visible, 1×4 horizontal ── */
   featureList: {
     display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "0",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
     width: "100%",
-    maxWidth: "1200px",
-    padding: "0 48px",
+    maxWidth: "1400px",
+    margin: "0 auto",
+    padding: "0 8px",
     boxSizing: "border-box",
     textAlign: "left",
     borderTop: "1px solid #d4cfc6",
     paddingTop: "32px",
   },
   featureRow: {
-    display: "flex", gap: "14px", alignItems: "flex-start",
-    padding: "0 24px 0 0",
+    display: "flex",
+    gap: "14px",
+    alignItems: "flex-start",
+    padding: "0 28px",
+    minWidth: 0,
     borderRight: "1px solid #d4cfc6",
-    marginRight: "24px",
   },
   featureIcon: { fontSize: "1.2rem", color: "#2d7a4f", marginTop: "3px", flexShrink: 0 },
-  featureTitle: { fontSize: "1.05rem", color: "#1a1a18", fontWeight: 500, marginBottom: "6px" },
-  featureDesc: { fontSize: "0.92rem", color: "#6b6860", lineHeight: 1.55 },
+  featureTitle: {
+    fontSize: "1.08rem",
+    color: "#1a1a18",
+    fontWeight: 500,
+    marginBottom: "6px",
+  },
+  featureDesc: {
+    fontSize: "0.95rem",
+    color: "#6b6860",
+    lineHeight: 1.55,
+  },
 
   /* ── Bottom panel ── */
   bottomPanel: {
