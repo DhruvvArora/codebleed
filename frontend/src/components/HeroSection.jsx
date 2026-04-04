@@ -16,34 +16,32 @@ export default function HeroSection({
   const handleKey = (e) => { if (e.key === "Enter") handleSubmit(); };
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-53px)]">
+    <div style={styles.root}>
 
-      {/* Hero Section */}
-      <div className="min-h-[calc(100vh-53px)] flex items-center justify-center px-8 py-20 box-border">
-        <div className="flex flex-col items-center text-center gap-9 w-full max-w-[1320px] mx-auto">
+      {/* ── Hero Section ── */}
+      <div style={styles.heroSection}>
+        <div style={styles.heroInner}>
 
-          <div className="flex items-center gap-[10px] text-[1.1rem] tracking-[0.14em] uppercase text-accent">
-            <span className="w-2 h-2 rounded-full bg-accent inline-block shrink-0" />
+          <div style={styles.eyebrow}>
+            <span style={styles.eyebrowDot} />
             Threat Intelligence Platform
           </div>
 
-          <h1 className="font-display text-[clamp(3rem,5vw,5.2rem)] font-normal leading-[1.02] tracking-[-0.03em] text-dark m-0">
+          <h1 style={styles.heroTitle}>
             Scan your repo.<br />
-            <em className="italic text-accent whitespace-nowrap inline-block">Find the blast radius.</em>
+            <em style={styles.heroItalic}>Find the blast radius.</em>
           </h1>
 
-          <p className="text-[clamp(1.05rem,1.6vw,1.3rem)] text-muted leading-[1.7] max-w-[540px] m-0">
+          <p style={styles.heroSub}>
             Graph-powered security analysis for AI-assisted codebases.
             Uncover attack paths before someone else does.
           </p>
 
-          {/* Input block */}
-          <div className="flex flex-col gap-3 w-full max-w-[700px]">
-            <label className="text-base tracking-[0.12em] uppercase text-muted text-left">
-              GitHub Repository URL
-            </label>
+          {/* ── Input block ── */}
+          <div style={styles.inputBlock}>
+            <label style={styles.label}>GitHub Repository URL</label>
             <input
-              className="w-full px-5 py-4 font-mono text-[0.95rem] bg-white border border-border rounded-[5px] text-dark outline-none box-border"
+              style={styles.input}
               type="text"
               value={repoUrl}
               onChange={(e) => setRepoUrl(e.target.value)}
@@ -52,17 +50,17 @@ export default function HeroSection({
               disabled={loading}
             />
             <button
-              className={`py-[18px] font-mono text-[1.05rem] bg-dark text-light border-none rounded-[5px] cursor-pointer tracking-[0.06em] w-full${loading ? " opacity-50 cursor-not-allowed" : ""}`}
+              style={{ ...styles.btn, ...(loading ? styles.btnDisabled : {}) }}
               onClick={handleSubmit}
               disabled={loading}
             >
               {loading ? "◌  Scanning…" : "▸  Run Scan"}
             </button>
-            {error && <p className="text-[0.82rem] text-critical m-0 text-left">{error}</p>}
+            {error && <p style={styles.error}>{error}</p>}
           </div>
 
-          {/* Feature list */}
-          <div className="grid grid-cols-4 w-full max-w-[1400px] mx-auto px-2 box-border text-left border-t border-border pt-8">
+          {/* ── Feature list — always visible ── */}
+          <div style={styles.featureList}>
             {[
               ["◈", "Attack path graph", "Model your repo as a Neo4j threat graph"],
               ["◎", "CVE matching", "Cross-reference deps against OSV.dev"],
@@ -71,12 +69,15 @@ export default function HeroSection({
             ].map(([icon, title, desc], i, arr) => (
               <div
                 key={title}
-                className={`flex gap-[14px] items-start px-7 min-w-0${i < arr.length - 1 ? " border-r border-border" : ""}`}
+                style={{
+                  ...styles.featureRow,
+                  ...(i === arr.length - 1 ? { borderRight: "none", marginRight: 0, paddingRight: 0 } : {}),
+                }}
               >
-                <span className="text-[1.2rem] text-accent mt-[3px] shrink-0">{icon}</span>
+                <span style={styles.featureIcon}>{icon}</span>
                 <div>
-                  <div className="text-[1.08rem] text-dark font-medium mb-[6px]">{title}</div>
-                  <div className="text-[0.95rem] text-muted leading-[1.55]">{desc}</div>
+                  <div style={styles.featureTitle}>{title}</div>
+                  <div style={styles.featureDesc}>{desc}</div>
                 </div>
               </div>
             ))}
@@ -85,10 +86,10 @@ export default function HeroSection({
         </div>
       </div>
 
-      {/* Bottom panel */}
-      <div className="border-t border-border w-full">
+      {/* ── Bottom panel (attack paths / top risks) ── */}
+      <div style={styles.bottomPanel}>
         {!scanData && !loading && (
-          <div className="flex flex-col items-center justify-center px-[60px] py-20 text-center gap-5">
+          <div style={styles.emptyRight}>
             <svg width="260" height="200" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="130" cy="40" r="18" stroke="#2d7a4f" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.5" />
               <circle cx="50" cy="130" r="14" stroke="#d69e2e" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.4" />
@@ -106,10 +107,8 @@ export default function HeroSection({
               <text x="82" y="175" fontSize="9" fill="#e53e3e" opacity="0.8" fontFamily="monospace">secret</text>
               <text x="163" y="170" fontSize="9" fill="#805ad5" opacity="0.8" fontFamily="monospace">vuln</text>
             </svg>
-            <p className="font-display text-[1.8rem] text-dark tracking-[-0.02em] m-0">
-              Attack paths will appear here
-            </p>
-            <p className="text-[0.85rem] text-muted leading-[1.7] max-w-[400px] m-0">
+            <p style={styles.emptyHeading}>Attack paths will appear here</p>
+            <p style={styles.emptyDesc}>
               After scanning, CodeBleed maps your repo as a threat graph and surfaces
               the most dangerous paths from entry points to sensitive assets.
             </p>
@@ -117,22 +116,20 @@ export default function HeroSection({
         )}
 
         {loading && (
-          <div className="flex flex-col items-center justify-center px-[60px] py-20 text-center gap-5">
-            <div className="w-14 h-14 rounded-full border-2 border-accent opacity-50" style={{ animation: "spin 2s linear infinite" }} />
-            <p className="font-display text-[1.8rem] text-dark tracking-[-0.02em] m-0">Building threat graph…</p>
-            <p className="text-[0.85rem] text-muted leading-[1.7] max-w-[400px] m-0">
-              Fetching commits · Matching CVEs · Running AI analysis
-            </p>
+          <div style={styles.emptyRight}>
+            <div style={styles.pulsingRing} />
+            <p style={styles.emptyHeading}>Building threat graph…</p>
+            <p style={styles.emptyDesc}>Fetching commits · Matching CVEs · Running AI analysis</p>
           </div>
         )}
 
         {scanData && (
-          <div className="px-16 py-12 flex flex-col gap-5 max-w-[960px] mx-auto w-full box-border">
-            <div className="flex items-center justify-between pb-[14px] border-b border-border">
-              <span className="text-[0.7rem] tracking-[0.14em] uppercase text-dark font-semibold">Attack Paths</span>
-              <span className="text-[0.7rem] text-muted">{scanData.attack_paths.length} detected</span>
+          <div style={styles.pathsPanel}>
+            <div style={styles.panelHeader}>
+              <span style={styles.panelTitle}>Attack Paths</span>
+              <span style={styles.panelCount}>{scanData.attack_paths.length} detected</span>
             </div>
-            <div className="flex flex-col gap-[10px]">
+            <div style={styles.pathsList}>
               {scanData.attack_paths.map((path) => (
                 <PathCard
                   key={path.path_id}
@@ -142,33 +139,24 @@ export default function HeroSection({
                 />
               ))}
             </div>
-            <div className="border-t border-[#f0ece4]" />
-            <div className="flex items-center justify-between pb-[14px] border-b border-border">
-              <span className="text-[0.7rem] tracking-[0.14em] uppercase text-dark font-semibold">Top Risks</span>
+            <div style={styles.panelDivider} />
+            <div style={styles.panelHeader}>
+              <span style={styles.panelTitle}>Top Risks</span>
             </div>
-            <div className="flex flex-col">
+            <div style={styles.risksList}>
               {scanData.top_risks.map((risk) => (
-                <div key={risk.id} className="flex items-center justify-between py-[14px] border-b border-[#f0ece4]">
-                  <div className="flex items-center gap-[10px] flex-1">
-                    <span
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{ backgroundColor: SEVERITY_COLOR[risk.severity] }}
-                    />
-                    <span className="text-[0.85rem] text-dark leading-[1.4]">{risk.title}</span>
+                <div key={risk.id} style={styles.riskRow}>
+                  <div style={styles.riskLeft}>
+                    <span style={{ ...styles.riskDot, backgroundColor: SEVERITY_COLOR[risk.severity] }} />
+                    <span style={styles.riskTitle}>{risk.title}</span>
                   </div>
-                  <span
-                    className="font-display text-[1.5rem] ml-5 shrink-0"
-                    style={{ color: SEVERITY_COLOR[risk.severity] }}
-                  >
+                  <span style={{ ...styles.riskScore, color: SEVERITY_COLOR[risk.severity] }}>
                     {risk.risk_score}
                   </span>
                 </div>
               ))}
             </div>
-            <button
-              className="self-start mt-2 px-7 py-[13px] font-mono text-[0.85rem] bg-dark text-light border-none rounded-[5px] cursor-pointer tracking-[0.06em]"
-              onClick={onViewReport}
-            >
+            <button style={styles.reportBtn} onClick={onViewReport}>
               View Full AI Report ↓
             </button>
           </div>
@@ -181,23 +169,201 @@ export default function HeroSection({
 
 function PathCard({ path, selected, onSelect }) {
   return (
-    <div
-      className={`px-[22px] py-5 border rounded-[6px] cursor-pointer bg-white flex flex-col gap-2 transition-[border-color,box-shadow] duration-150${selected ? " border-accent shadow-[0_0_0_3px_rgba(45,122,79,0.1)]" : " border-border"}`}
-      onClick={onSelect}
-    >
-      <div className="flex justify-between items-center">
-        <span
-          className="text-[0.65rem] tracking-[0.1em] font-bold"
-          style={{ color: SEVERITY_COLOR[path.severity] }}
-        >
+    <div style={{ ...styles.pathCard, ...(selected ? styles.pathCardSelected : {}) }} onClick={onSelect}>
+      <div style={styles.pathCardTop}>
+        <span style={{ ...styles.pathSev, color: SEVERITY_COLOR[path.severity] }}>
           {path.severity.toUpperCase()}
         </span>
-        <span className="text-[0.72rem] text-muted">{path.risk_score} / 100</span>
+        <span style={styles.pathScore}>{path.risk_score} / 100</span>
       </div>
-      <p className="text-[0.85rem] text-dark m-0 leading-[1.55]">{path.summary}</p>
-      <div className="text-[0.65rem] text-muted">
+      <p style={styles.pathSummary}>{path.summary}</p>
+      <div style={styles.pathMeta}>
         {path.node_ids.length} nodes · {path.edge_ids.length} edges · {path.path_type.replace(/_/g, " ")}
       </div>
     </div>
   );
 }
+
+const styles = {
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "calc(100vh - 53px)",
+  },
+
+  /* ── Hero ── */
+  heroSection: {
+    minHeight: "calc(100vh - 53px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "80px 32px",
+    boxSizing: "border-box",
+  },
+  heroInner: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center",
+    gap: "36px",
+    width: "100%",
+    maxWidth: "1320px",
+    margin: "0 auto",
+  },
+
+  eyebrow: {
+    display: "flex", alignItems: "center", gap: "10px",
+    fontSize: "1.1rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#2d7a4f",
+  },
+  eyebrowDot: {
+    width: "8px", height: "8px", borderRadius: "50%",
+    backgroundColor: "#2d7a4f", display: "inline-block", flexShrink: 0,
+  },
+
+  heroTitle: {
+    fontFamily: "'Fraunces', serif",
+    fontSize: "clamp(3rem, 5vw, 5.2rem)",
+    fontWeight: 400,
+    lineHeight: 1.02,
+    letterSpacing: "-0.03em",
+    color: "#1a1a18",
+    margin: 0,
+  },
+  heroItalic: {
+    fontStyle: "italic",
+    color: "#2d7a4f",
+    whiteSpace: "nowrap",
+    display: "inline-block",
+  },
+
+  heroSub: {
+    fontSize: "clamp(1.05rem, 1.6vw, 1.3rem)",
+    color: "#6b6860",
+    lineHeight: 1.7,
+    maxWidth: "540px",
+    margin: 0,
+  },
+
+  /* ── Input ── */
+  inputBlock: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    width: "100%",
+    maxWidth: "700px",
+  },
+  label: {
+    fontSize: "1rem", letterSpacing: "0.12em",
+    textTransform: "uppercase", color: "#6b6860", textAlign: "left",
+  },
+  input: {
+    width: "100%", padding: "16px 20px",
+    fontFamily: "'DM Mono', monospace", fontSize: "0.95rem",
+    backgroundColor: "#fff", border: "1px solid #d4cfc6", borderRadius: "5px",
+    color: "#1a1a18", outline: "none", boxSizing: "border-box",
+  },
+  btn: {
+    padding: "18px 0",
+    fontFamily: "'DM Mono', monospace", fontSize: "1.05rem",
+    backgroundColor: "#1a1a18", color: "#f5f2eb",
+    border: "none", borderRadius: "5px", cursor: "pointer",
+    letterSpacing: "0.06em", width: "100%",
+  },
+  btnDisabled: { opacity: 0.5, cursor: "not-allowed" },
+  error: { fontSize: "0.82rem", color: "#e53e3e", margin: 0, textAlign: "left" },
+
+  /* ── Features — always visible, 1×4 horizontal ── */
+  featureList: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    width: "100%",
+    maxWidth: "1400px",
+    margin: "0 auto",
+    padding: "0 8px",
+    boxSizing: "border-box",
+    textAlign: "left",
+    borderTop: "1px solid #d4cfc6",
+    paddingTop: "32px",
+  },
+  featureRow: {
+    display: "flex",
+    gap: "14px",
+    alignItems: "flex-start",
+    padding: "0 28px",
+    minWidth: 0,
+    borderRight: "1px solid #d4cfc6",
+  },
+  featureIcon: { fontSize: "1.2rem", color: "#2d7a4f", marginTop: "3px", flexShrink: 0 },
+  featureTitle: {
+    fontSize: "1.08rem",
+    color: "#1a1a18",
+    fontWeight: 500,
+    marginBottom: "6px",
+  },
+  featureDesc: {
+    fontSize: "0.95rem",
+    color: "#6b6860",
+    lineHeight: 1.55,
+  },
+
+  /* ── Bottom panel ── */
+  bottomPanel: {
+    borderTop: "1px solid #d4cfc6",
+    width: "100%",
+  },
+  emptyRight: {
+    display: "flex", flexDirection: "column",
+    alignItems: "center", justifyContent: "center",
+    padding: "80px 60px", textAlign: "center", gap: "20px",
+  },
+  emptyHeading: {
+    fontFamily: "'Fraunces', serif", fontSize: "1.8rem",
+    color: "#1a1a18", letterSpacing: "-0.02em", margin: 0,
+  },
+  emptyDesc: { fontSize: "0.85rem", color: "#6b6860", lineHeight: 1.7, maxWidth: "400px", margin: 0 },
+  pulsingRing: {
+    width: "56px", height: "56px", borderRadius: "50%",
+    border: "2px solid #2d7a4f", animation: "spin 2s linear infinite", opacity: 0.5,
+  },
+
+  pathsPanel: {
+    padding: "48px 64px",
+    display: "flex", flexDirection: "column", gap: "20px",
+    maxWidth: "960px", margin: "0 auto", width: "100%", boxSizing: "border-box",
+  },
+  panelHeader: {
+    display: "flex", alignItems: "center", justifyContent: "space-between",
+    paddingBottom: "14px", borderBottom: "1px solid #d4cfc6",
+  },
+  panelTitle: { fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#1a1a18", fontWeight: 600 },
+  panelCount: { fontSize: "0.7rem", color: "#6b6860" },
+  pathsList: { display: "flex", flexDirection: "column", gap: "10px" },
+  pathCard: {
+    padding: "20px 22px", border: "1px solid #d4cfc6", borderRadius: "6px",
+    cursor: "pointer", backgroundColor: "#fff",
+    display: "flex", flexDirection: "column", gap: "8px",
+    transition: "border-color 0.15s, box-shadow 0.15s",
+  },
+  pathCardSelected: { borderColor: "#2d7a4f", boxShadow: "0 0 0 3px rgba(45,122,79,0.1)" },
+  pathCardTop: { display: "flex", justifyContent: "space-between", alignItems: "center" },
+  pathSev: { fontSize: "0.65rem", letterSpacing: "0.1em", fontWeight: 700 },
+  pathScore: { fontSize: "0.72rem", color: "#6b6860" },
+  pathSummary: { fontSize: "0.85rem", color: "#1a1a18", margin: 0, lineHeight: 1.55 },
+  pathMeta: { fontSize: "0.65rem", color: "#6b6860" },
+  panelDivider: { borderTop: "1px solid #f0ece4" },
+  risksList: { display: "flex", flexDirection: "column" },
+  riskRow: {
+    display: "flex", alignItems: "center", justifyContent: "space-between",
+    padding: "14px 0", borderBottom: "1px solid #f0ece4",
+  },
+  riskLeft: { display: "flex", alignItems: "center", gap: "10px", flex: 1 },
+  riskDot: { width: "8px", height: "8px", borderRadius: "50%", flexShrink: 0 },
+  riskTitle: { fontSize: "0.85rem", color: "#1a1a18", lineHeight: 1.4 },
+  riskScore: { fontFamily: "'Fraunces', serif", fontSize: "1.5rem", marginLeft: "20px", flexShrink: 0 },
+  reportBtn: {
+    alignSelf: "flex-start", marginTop: "8px", padding: "13px 28px",
+    fontFamily: "'DM Mono', monospace", fontSize: "0.85rem",
+    backgroundColor: "#1a1a18", color: "#f5f2eb",
+    border: "none", borderRadius: "5px", cursor: "pointer", letterSpacing: "0.06em",
+  },
+};
