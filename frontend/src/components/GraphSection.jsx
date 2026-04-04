@@ -65,8 +65,14 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
           color: {
             background: colors.bg,
             border: isHighlighted ? (SEVERITY_COLOR[n.severity] || colors.bg) : colors.bg,
-            highlight: { background: colors.bg, border: SEVERITY_COLOR[n.severity] || colors.bg },
-            hover: { background: colors.bg, border: SEVERITY_COLOR[n.severity] || colors.bg },
+            highlight: {
+              background: colors.bg,
+              border: SEVERITY_COLOR[n.severity] || colors.bg,
+            },
+            hover: {
+              background: colors.bg,
+              border: SEVERITY_COLOR[n.severity] || colors.bg,
+            },
           },
           font: {
             color: colors.fg,
@@ -75,6 +81,20 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
           },
           borderWidth: isHighlighted ? 4 : 2,
           shadow: false,
+          // ? {
+          //   enabled: true,
+          //   color: SEVERITY_COLOR[n.severity] || colors.bg,
+          //   size: 18,
+          //   x: 0,
+          //   y: 0,
+          // }
+          // : {
+          //   enabled: true,
+          //   color: "rgba(0,0,0,0.25)",
+          //   size: 8,
+          //   x: 0,
+          //   y: 2,
+          // },
           size: isHighlighted ? 34 : 24,
           shape: shapeForLabel(n.label),
           title: buildTooltip(n),
@@ -91,6 +111,7 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
           from: e.source ?? e.from,
           to: e.target ?? e.to,
           label: "",
+          // label: e.type,
           color: {
             color: isHighlighted ? "#2d7a4f" : "#6b6860",
             highlight: "#2d7a4f",
@@ -112,9 +133,18 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
 
     const options = {
       autoResize: true,
-      nodes: { borderWidth: 2, margin: 10, scaling: { min: 20, max: 40 } },
-      edges: { length: 220, smooth: false },
-      layout: { improvedLayout: true },
+      nodes: {
+        borderWidth: 2,
+        margin: 10,
+        scaling: { min: 20, max: 40 },
+      },
+      edges: {
+        length: 220,
+        smooth: false,
+      },
+      layout: {
+        improvedLayout: true,
+      },
       physics: {
         enabled: true,
         solver: "forceAtlas2Based",
@@ -126,7 +156,12 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
           damping: 0.7,
           avoidOverlap: 1,
         },
-        stabilization: { enabled: true, iterations: 80, updateInterval: 25, fit: true },
+        stabilization: {
+          enabled: true,
+          iterations: 80,
+          updateInterval: 25,
+          fit: true,
+        },
       },
       interaction: {
         hover: true,
@@ -138,13 +173,25 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
       },
     };
 
-    if (networkRef.current) networkRef.current.destroy();
+    if (networkRef.current) {
+      networkRef.current.destroy();
+    }
+
     setNetworkReady(false);
 
-    networkRef.current = new window.vis.Network(containerRef.current, { nodes, edges }, options);
+    networkRef.current = new window.vis.Network(
+      containerRef.current,
+      { nodes, edges },
+      options
+    );
 
     networkRef.current.once("stabilized", () => {
-      networkRef.current.fit({ animation: { duration: 200, easingFunction: "easeInOutQuad" } });
+      networkRef.current.fit({
+        animation: {
+          duration: 200,
+          easingFunction: "easeInOutQuad",
+        },
+      });
       networkRef.current.setOptions({ physics: false });
       setNetworkReady(true);
     });
@@ -165,104 +212,103 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
   const selectedPath = scanData?.attack_paths?.find((p) => p.path_id === selectedPathId);
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-53px)] text-light">
-
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-14 py-6 border-b border-[#252522] flex-wrap gap-3">
-        <div className="flex items-center gap-5 flex-wrap">
-          <span className="font-display text-[1.1rem] text-accent tracking-[-0.01em]">◈ Threat Graph</span>
+    <div style={styles.root}>
+      <div style={styles.topBar}>
+        <div style={styles.topLeft}>
+          <span style={styles.sectionLabel}>◈ Threat Graph</span>
           {scanData && (
-            <span className="text-[0.65rem] text-[#4a4a48] tracking-[0.08em]">
+            <span style={styles.graphMeta}>
               {scanData.graph.nodes.length} nodes · {scanData.graph.edges.length} edges
             </span>
           )}
-          {networkReady && (
-            <span className="text-[0.62rem] text-accent border border-accent rounded-full px-[10px] py-1 tracking-[0.08em] uppercase">
-              stabilized
-            </span>
-          )}
+          {networkReady && <span style={styles.readyBadge}>stabilized</span>}
         </div>
 
         {selectedPath && (
-          <div className="flex items-center gap-3 px-4 py-2 border border-[#2a2a28] rounded-[5px]">
+          <div style={styles.pathBadge}>
             <span
-              className="text-[0.62rem] tracking-[0.1em] font-bold"
-              style={{ color: SEVERITY_COLOR[selectedPath.severity] || "#2d7a4f" }}
+              style={{
+                ...styles.pathSev,
+                color: SEVERITY_COLOR[selectedPath.severity] || "#2d7a4f",
+              }}
             >
               {selectedPath.severity.toUpperCase()}
             </span>
-            <span className="text-[0.68rem] text-muted">
+            <span style={styles.pathLabel}>
               {selectedPath.path_type.replace(/_/g, " ")} · score {selectedPath.risk_score}
             </span>
           </div>
         )}
 
         {scanData && (
-          <button
-            className="px-5 py-[9px] font-mono text-[0.75rem] bg-transparent text-accent border border-accent rounded-[5px] cursor-pointer tracking-[0.04em]"
-            onClick={onViewReport}
-          >
+          <button style={styles.reportBtn} onClick={onViewReport}>
             AI Report ↓
           </button>
         )}
       </div>
 
-      {/* Canvas area */}
-      <div className="flex-1 relative overflow-hidden" style={{ height: "calc(100vh - 150px)", minHeight: "760px" }}>
+      <div style={styles.canvasWrap}>
         {!scanData ? (
-          <div className="flex flex-col items-center justify-center h-full min-h-[500px] gap-4">
-            <span className="text-[3rem] text-accent opacity-40">◈</span>
-            <p className="font-display text-[1.6rem] text-light opacity-30 m-0 tracking-[-0.02em]">Threat graph</p>
-            <p className="text-[0.78rem] text-muted m-0">
+          <div style={styles.empty}>
+            <span style={styles.emptyIcon}>◈</span>
+            <p style={styles.emptyTitle}>Threat graph</p>
+            <p style={styles.emptyText}>
               Run a scan to visualize your repository as a threat graph
             </p>
           </div>
         ) : (
           <>
-            <div
-              ref={containerRef}
-              className="w-full h-full absolute inset-0"
-              style={{ background: "radial-gradient(circle at center, #171715 0%, #111110 65%, #0c0c0b 100%)" }}
-            />
+            <div ref={containerRef} style={styles.canvas} />
 
-            {/* Zoom controls */}
-            <div className="absolute top-6 right-6 flex flex-col gap-[10px] z-[5]">
+            <div style={styles.zoomControls}>
               <button
                 type="button"
-                className="w-[42px] h-[42px] rounded-[6px] border border-accent bg-[#111110] text-accent text-[1.3rem] cursor-pointer font-mono flex items-center justify-center"
-                onClick={() => networkRef.current?.moveTo({ scale: (networkRef.current.getScale() || 1) * 1.2 })}
+                style={styles.zoomBtn}
+                onClick={() =>
+                  networkRef.current?.moveTo({
+                    scale: (networkRef.current.getScale() || 1) * 1.2,
+                  })
+                }
               >
                 +
               </button>
               <button
                 type="button"
-                className="w-[42px] h-[42px] rounded-[6px] border border-accent bg-[#111110] text-accent text-[1.3rem] cursor-pointer font-mono flex items-center justify-center"
-                onClick={() => networkRef.current?.moveTo({ scale: (networkRef.current.getScale() || 1) / 1.2 })}
+                style={styles.zoomBtn}
+                onClick={() =>
+                  networkRef.current?.moveTo({
+                    scale: (networkRef.current.getScale() || 1) / 1.2,
+                  })
+                }
               >
                 −
               </button>
             </div>
 
-            {/* Legend */}
-            <div className="absolute bottom-6 left-6 flex flex-wrap gap-[10px] max-w-[520px] z-[4]">
+            <div style={styles.legend}>
               {Object.entries(LABEL_COLOR).map(([label, colors]) => (
-                <div key={label} className="flex items-center gap-[6px]">
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: colors.bg }} />
-                  <span className="text-[0.6rem] text-[#8a857d] tracking-[0.06em]">{label}</span>
+                <div key={label} style={styles.legendItem}>
+                  <span style={{ ...styles.legendDot, backgroundColor: colors.bg }} />
+                  <span style={styles.legendLabel}>{label}</span>
                 </div>
               ))}
             </div>
 
-            {/* Hover tooltip */}
             {hoveredNode && (
-              <div className="absolute top-6 right-[86px] bg-[#111110] border border-accent rounded-[6px] px-[18px] py-[14px] flex flex-col gap-1 min-w-[170px] z-[4]">
-                <div className="text-[0.6rem] tracking-[0.12em] uppercase text-accent">{hoveredNode.label}</div>
-                <div className="text-[0.88rem] text-light font-medium">{hoveredNode.name}</div>
-                <div className="flex items-center justify-between text-[0.7rem] mt-1">
-                  <span style={{ color: SEVERITY_COLOR[hoveredNode.severity] || "#2d7a4f" }}>
+              <div style={styles.tooltip}>
+                <div style={styles.tooltipLabel}>{hoveredNode.label}</div>
+                <div style={styles.tooltipName}>{hoveredNode.name}</div>
+                <div style={styles.tooltipRow}>
+                  <span
+                    style={{
+                      color: SEVERITY_COLOR[hoveredNode.severity] || "#2d7a4f",
+                    }}
+                  >
                     {hoveredNode.severity}
                   </span>
-                  <span className="text-muted">risk {hoveredNode.risk_score ?? 0}</span>
+                  <span style={styles.tooltipScore}>
+                    risk {hoveredNode.risk_score ?? 0}
+                  </span>
                 </div>
               </div>
             )}
@@ -270,25 +316,27 @@ export default function GraphSection({ scanData, selectedPathId, onViewReport })
         )}
       </div>
 
-      {/* Attack chain bar */}
       {selectedPath && scanData && (
-        <div className="px-14 py-[18px] border-t border-[#252522] flex items-start gap-6 flex-wrap">
-          <span className="text-[0.62rem] tracking-[0.12em] uppercase text-accent shrink-0 pt-[3px]">
-            Attack Chain
-          </span>
-          <div className="flex items-center flex-wrap gap-[6px]">
+        <div style={styles.chainBar}>
+          <span style={styles.chainLabel}>Attack Chain</span>
+          <div style={styles.chain}>
             {selectedPath.node_ids.map((nodeId, i) => {
               const node = scanData.graph.nodes.find((n) => n.id === nodeId);
+
               return (
-                <span key={nodeId} className="flex items-center gap-[6px]">
+                <span key={nodeId} style={styles.chainStep}>
                   <span
-                    className="text-[0.7rem] px-3 py-1 border rounded-[3px] text-light bg-dark"
-                    style={{ borderColor: node ? SEVERITY_COLOR[node.severity] || "#6b6860" : "#6b6860" }}
+                    style={{
+                      ...styles.chainNode,
+                      borderColor: node
+                        ? SEVERITY_COLOR[node.severity] || "#6b6860"
+                        : "#6b6860",
+                    }}
                   >
                     {node?.name || nodeId}
                   </span>
                   {i < selectedPath.node_ids.length - 1 && (
-                    <span className="text-[0.75rem] text-accent">→</span>
+                    <span style={styles.chainArrow}>→</span>
                   )}
                 </span>
               );
@@ -322,3 +370,239 @@ function buildTooltip(n) {
     severity: ${n.severity ?? "unknown"} · risk: ${n.risk_score ?? 0}
   </div>`;
 }
+
+const styles = {
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "calc(100vh - 53px)",
+    color: "#f5f2eb",
+  },
+  topBar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "24px 56px",
+    borderBottom: "1px solid #252522",
+    flexWrap: "wrap",
+    gap: "12px",
+  },
+  topLeft: {
+    display: "flex",
+    alignItems: "center",
+    gap: "20px",
+    flexWrap: "wrap",
+  },
+  sectionLabel: {
+    fontFamily: "'Fraunces', serif",
+    fontSize: "1.1rem",
+    color: "#2d7a4f",
+    letterSpacing: "-0.01em",
+  },
+  graphMeta: {
+    fontSize: "0.65rem",
+    color: "#4a4a48",
+    letterSpacing: "0.08em",
+  },
+  readyBadge: {
+    fontSize: "0.62rem",
+    color: "#2d7a4f",
+    border: "1px solid #2d7a4f",
+    borderRadius: "999px",
+    padding: "4px 10px",
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+  },
+  pathBadge: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    padding: "8px 16px",
+    border: "1px solid #2a2a28",
+    borderRadius: "5px",
+  },
+  pathSev: {
+    fontSize: "0.62rem",
+    letterSpacing: "0.1em",
+    fontWeight: 700,
+  },
+  pathLabel: {
+    fontSize: "0.68rem",
+    color: "#6b6860",
+  },
+  reportBtn: {
+    padding: "9px 20px",
+    fontFamily: "'DM Mono', monospace",
+    fontSize: "0.75rem",
+    backgroundColor: "transparent",
+    color: "#2d7a4f",
+    border: "1px solid #2d7a4f",
+    borderRadius: "5px",
+    cursor: "pointer",
+    letterSpacing: "0.04em",
+  },
+  canvasWrap: {
+    flex: 1,
+    position: "relative",
+    height: "calc(100vh - 150px)",
+    minHeight: "760px",
+    overflow: "hidden",
+  },
+  canvas: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    inset: 0,
+    background: "radial-gradient(circle at center, #171715 0%, #111110 65%, #0c0c0b 100%)",
+  },
+  zoomControls: {
+    position: "absolute",
+    top: "24px",
+    right: "24px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    zIndex: 5,
+  },
+  zoomBtn: {
+    width: "42px",
+    height: "42px",
+    borderRadius: "6px",
+    border: "1px solid #2d7a4f",
+    backgroundColor: "#111110",
+    color: "#2d7a4f",
+    fontSize: "1.3rem",
+    cursor: "pointer",
+    fontFamily: "'DM Mono', monospace",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  empty: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
+    minHeight: "500px",
+    gap: "16px",
+  },
+  emptyIcon: {
+    fontSize: "3rem",
+    color: "#2d7a4f",
+    opacity: 0.4,
+  },
+  emptyTitle: {
+    fontFamily: "'Fraunces', serif",
+    fontSize: "1.6rem",
+    color: "#f5f2eb",
+    opacity: 0.3,
+    margin: 0,
+    letterSpacing: "-0.02em",
+  },
+  emptyText: {
+    fontSize: "0.78rem",
+    color: "#6b6860",
+    margin: 0,
+  },
+  legend: {
+    position: "absolute",
+    bottom: "24px",
+    left: "24px",
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "10px",
+    maxWidth: "520px",
+    zIndex: 4,
+  },
+  legendItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+  },
+  legendDot: {
+    width: "8px",
+    height: "8px",
+    borderRadius: "50%",
+    flexShrink: 0,
+  },
+  legendLabel: {
+    fontSize: "0.6rem",
+    color: "#8a857d",
+    letterSpacing: "0.06em",
+  },
+  tooltip: {
+    position: "absolute",
+    top: "24px",
+    right: "86px",
+    backgroundColor: "#111110",
+    border: "1px solid #2d7a4f",
+    borderRadius: "6px",
+    padding: "14px 18px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px",
+    minWidth: "170px",
+    zIndex: 4,
+  },
+  tooltipLabel: {
+    fontSize: "0.6rem",
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
+    color: "#2d7a4f",
+  },
+  tooltipName: {
+    fontSize: "0.88rem",
+    color: "#f5f2eb",
+    fontWeight: 500,
+  },
+  tooltipRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    fontSize: "0.7rem",
+    marginTop: "4px",
+  },
+  tooltipScore: {
+    color: "#6b6860",
+  },
+  chainBar: {
+    padding: "18px 56px",
+    borderTop: "1px solid #252522",
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "24px",
+    flexWrap: "wrap",
+  },
+  chainLabel: {
+    fontSize: "0.62rem",
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
+    color: "#2d7a4f",
+    flexShrink: 0,
+    paddingTop: "3px",
+  },
+  chain: {
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: "6px",
+  },
+  chainStep: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+  },
+  chainNode: {
+    fontSize: "0.7rem",
+    padding: "4px 12px",
+    border: "1px solid",
+    borderRadius: "3px",
+    color: "#f5f2eb",
+    backgroundColor: "#1a1a18",
+  },
+  chainArrow: {
+    fontSize: "0.75rem",
+    color: "#2d7a4f",
+  },
+};

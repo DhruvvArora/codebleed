@@ -20,10 +20,10 @@ export default function ReportSection({ scanData, selectedPathId }) {
 
   if (!scanData) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-53px)] gap-4">
-        <span className="text-[2.5rem] text-dark opacity-20">◎</span>
-        <p className="font-display text-[1.6rem] text-dark opacity-30 m-0">AI Report</p>
-        <p className="text-[0.78rem] text-muted m-0">Run a scan to generate your threat intelligence report</p>
+      <div style={styles.empty}>
+        <span style={styles.emptyIcon}>◎</span>
+        <p style={styles.emptyTitle}>AI Report</p>
+        <p style={styles.emptyText}>Run a scan to generate your threat intelligence report</p>
       </div>
     );
   }
@@ -46,45 +46,29 @@ export default function ReportSection({ scanData, selectedPathId }) {
   const cypherQuery = buildCypher(scanData, selectedPathId);
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-53px)]">
-
-      {/* Severity banner */}
-      <div
-        className="flex items-start justify-between px-14 py-10 border-l-[5px] flex-wrap gap-6"
-        style={{
-          borderLeftColor: SEVERITY_COLOR[sev],
-          backgroundColor: SEVERITY_BG[sev],
-        }}
-      >
-        <div className="flex flex-col gap-[10px] flex-1">
-          <div className="text-[0.62rem] tracking-[0.16em] font-bold" style={{ color: SEVERITY_COLOR[sev] }}>
+    <div style={styles.root}>
+      {/* Big severity banner */}
+      <div style={{ ...styles.banner, borderLeftColor: SEVERITY_COLOR[sev], backgroundColor: SEVERITY_BG[sev] }}>
+        <div style={styles.bannerLeft}>
+          <div style={{ ...styles.bannerSevLabel, color: SEVERITY_COLOR[sev] }}>
             {sev.toUpperCase()}
           </div>
-          <h2 className="font-display text-[clamp(1.4rem,2.5vw,2rem)] font-normal tracking-[-0.02em] text-dark m-0 leading-[1.2]">
-            {ai_report.threat_title}
-          </h2>
-          <p className="text-[0.85rem] text-muted leading-[1.65] m-0 max-w-[520px]">
-            {ai_report.executive_summary}
-          </p>
+          <h2 style={styles.bannerTitle}>{ai_report.threat_title}</h2>
+          <p style={styles.bannerSummary}>{ai_report.executive_summary}</p>
         </div>
-        <div className="flex flex-col items-end gap-1 shrink-0">
-          <div className="font-display text-[5rem] leading-none text-dark tracking-[-0.05em]">
-            {summary.risk_score}
-          </div>
-          <div className="text-[0.62rem] tracking-[0.12em] uppercase text-muted">risk score</div>
-          <div className="text-[0.68rem] text-muted mt-1">
-            {Math.round(ai_report.confidence * 100)}% confidence
-          </div>
+        <div style={styles.bannerRight}>
+          <div style={styles.bigScore}>{summary.risk_score}</div>
+          <div style={styles.bigScoreLabel}>risk score</div>
+          <div style={styles.confScore}>{Math.round(ai_report.confidence * 100)}% confidence</div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-border px-14">
+      <div style={styles.tabBar}>
         {[["report", "AI Report"], ["fixes", `Fix Simulation (${fix_candidates.length})`], ["cypher", "Cypher Query"]].map(([id, label]) => (
           <button
             key={id}
-            className={`px-[22px] py-[14px] font-mono text-[0.75rem] bg-transparent border-none border-b-2 cursor-pointer tracking-[0.04em] transition-colors${activeTab === id ? " text-dark border-b-dark border-dark" : " text-muted border-b-transparent"}`}
-            style={{ borderBottomWidth: "2px", borderBottomStyle: "solid", borderBottomColor: activeTab === id ? "#1a1a18" : "transparent" }}
+            style={{ ...styles.tab, ...(activeTab === id ? styles.tabActive : {}) }}
             onClick={() => setActiveTab(id)}
           >
             {label}
@@ -92,39 +76,39 @@ export default function ReportSection({ scanData, selectedPathId }) {
         ))}
       </div>
 
-      <div className="flex-1 px-14 py-12">
+      <div style={styles.content}>
 
-        {/* Report tab */}
+        {/* ── Report tab ── */}
         {activeTab === "report" && (
-          <div className="grid grid-cols-2 gap-14">
-            <div className="flex flex-col gap-9">
+          <div style={styles.reportGrid}>
+            <div style={styles.reportCol}>
               <Block title="Why It Matters">
-                <p className="text-[0.85rem] text-[#3a3a38] leading-[1.75] m-0">{ai_report.why_it_matters}</p>
+                <p style={styles.prose}>{ai_report.why_it_matters}</p>
               </Block>
               <Block title="Key Findings">
                 {ai_report.key_findings.map((f, i) => (
-                  <div key={i} className="flex gap-[10px] mb-2">
-                    <span className="text-high shrink-0 mt-[1px]">▸</span>
-                    <span className="text-[0.82rem] text-[#3a3a38] leading-[1.55]">{f}</span>
+                  <div key={i} style={styles.findingItem}>
+                    <span style={styles.findingBullet}>▸</span>
+                    <span style={styles.findingText}>{f}</span>
                   </div>
                 ))}
               </Block>
               <Block title="Recommended Fixes">
                 {ai_report.recommended_fixes.map((f, i) => (
-                  <div key={i} className="flex gap-[10px] mb-2">
-                    <span className="text-accent shrink-0 mt-[1px]">✓</span>
-                    <span className="text-[0.82rem] text-[#3a3a38] leading-[1.55]">{f}</span>
+                  <div key={i} style={styles.findingItem}>
+                    <span style={{ ...styles.findingBullet, color: "#2d7a4f" }}>✓</span>
+                    <span style={styles.findingText}>{f}</span>
                   </div>
                 ))}
               </Block>
             </div>
 
-            <div className="flex flex-col gap-9">
+            <div style={styles.reportCol}>
               <Block title="Affected Files">
                 {ai_report.affected_files.map(f => (
-                  <div key={f} className="flex items-center gap-[10px] px-3 py-2 bg-subtle rounded-[4px] mb-[6px]">
-                    <span className="text-[0.7rem] text-muted">◫</span>
-                    <span className="text-[0.75rem] font-mono text-dark">{f}</span>
+                  <div key={f} style={styles.fileRow}>
+                    <span style={styles.fileIcon}>◫</span>
+                    <span style={styles.fileName}>{f}</span>
                   </div>
                 ))}
               </Block>
@@ -132,9 +116,9 @@ export default function ReportSection({ scanData, selectedPathId }) {
               <Block title="Secrets Detected">
                 {findings.secrets.map(s => (
                   <FindingCard key={s.id} severity={s.severity}>
-                    <div className="text-[0.82rem] font-semibold text-dark mb-1">{s.type}</div>
-                    <div className="text-[0.7rem] text-muted">{s.file}</div>
-                    <div className="text-[0.7rem] text-muted">by {s.developer}</div>
+                    <div style={styles.fcTitle}>{s.type}</div>
+                    <div style={styles.fcMeta}>{s.file}</div>
+                    <div style={styles.fcMeta}>by {s.developer}</div>
                   </FindingCard>
                 ))}
               </Block>
@@ -142,9 +126,9 @@ export default function ReportSection({ scanData, selectedPathId }) {
               <Block title="Vulnerabilities">
                 {findings.vulnerabilities.map(v => (
                   <FindingCard key={v.id} severity={v.severity}>
-                    <div className="text-[0.82rem] font-semibold text-dark mb-1">{v.cve}</div>
-                    <div className="text-[0.7rem] text-muted">{v.dependency}</div>
-                    <div className="text-[0.7rem] text-muted">{v.affected_files.length} file(s) affected</div>
+                    <div style={styles.fcTitle}>{v.cve}</div>
+                    <div style={styles.fcMeta}>{v.dependency}</div>
+                    <div style={styles.fcMeta}>{v.affected_files.length} file(s) affected</div>
                   </FindingCard>
                 ))}
               </Block>
@@ -152,9 +136,9 @@ export default function ReportSection({ scanData, selectedPathId }) {
               <Block title="Exposed Endpoints">
                 {findings.endpoints.map(e => (
                   <FindingCard key={e.id} severity={e.severity}>
-                    <div className="text-[0.82rem] font-semibold text-dark mb-1">{e.method} {e.route}</div>
-                    <div className="text-[0.7rem] text-muted">{e.file}</div>
-                    {e.public_facing && <div className="text-[0.7rem] text-critical">public facing</div>}
+                    <div style={styles.fcTitle}>{e.method} {e.route}</div>
+                    <div style={styles.fcMeta}>{e.file}</div>
+                    {e.public_facing && <div style={{ ...styles.fcMeta, color: "#e53e3e" }}>public facing</div>}
                   </FindingCard>
                 ))}
               </Block>
@@ -162,70 +146,58 @@ export default function ReportSection({ scanData, selectedPathId }) {
           </div>
         )}
 
-        {/* Fixes tab */}
+        {/* ── Fixes tab ── */}
         {activeTab === "fixes" && (
-          <div className="flex flex-col gap-9 max-w-[720px]">
-            <div className="px-7 py-7 border border-border rounded-[8px] bg-white flex flex-col gap-4">
-              <div className="flex items-center gap-6">
+          <div style={styles.fixLayout}>
+            <div style={styles.scoreMeter}>
+              <div style={styles.scoreRow}>
                 <div>
-                  <div className="font-display text-[3.5rem] leading-none text-dark tracking-[-0.04em]">
-                    {summary.risk_score}
-                  </div>
-                  <div className="text-[0.6rem] tracking-[0.1em] uppercase text-muted mt-1">Current</div>
+                  <div style={styles.scoreNum}>{summary.risk_score}</div>
+                  <div style={styles.scoreNumLabel}>Current</div>
                 </div>
-                <div className="text-[1.4rem] text-muted">→</div>
+                <div style={styles.scoreArrow}>→</div>
                 <div>
-                  <div
-                    className="font-display text-[3.5rem] leading-none tracking-[-0.04em]"
-                    style={{ color: simulatedScore < 50 ? "#2d7a4f" : "#e53e3e" }}
-                  >
+                  <div style={{ ...styles.scoreNum, color: simulatedScore < 50 ? "#2d7a4f" : "#e53e3e" }}>
                     {simulatedScore}
                   </div>
-                  <div className="text-[0.6rem] tracking-[0.1em] uppercase text-muted mt-1">Simulated</div>
+                  <div style={styles.scoreNumLabel}>Simulated</div>
                 </div>
                 {appliedFixes.size > 0 && (
-                  <div className="text-[0.72rem] text-accent ml-auto">
+                  <div style={styles.reductionNote}>
                     ↓ {totalReduction} pts from {appliedFixes.size} fix(es)
                   </div>
                 )}
               </div>
-              <div className="h-[6px] bg-subtle rounded-[3px] overflow-hidden">
-                <div
-                  className="h-full rounded-[3px] transition-[width,background-color] duration-400"
-                  style={{
-                    width: `${simulatedScore}%`,
-                    backgroundColor: simulatedScore < 50 ? "#2d7a4f" : simulatedScore < 75 ? "#d69e2e" : "#e53e3e",
-                  }}
-                />
+              <div style={styles.progressBar}>
+                <div style={{
+                  ...styles.progressFill,
+                  width: `${simulatedScore}%`,
+                  backgroundColor: simulatedScore < 50 ? "#2d7a4f" : simulatedScore < 75 ? "#d69e2e" : "#e53e3e",
+                }} />
               </div>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div style={styles.fixList}>
               {fix_candidates.sort((a, b) => a.priority - b.priority).map(fix => {
                 const applied = appliedFixes.has(fix.fix_id);
                 return (
-                  <div
-                    key={fix.fix_id}
-                    className={`px-[22px] py-5 border rounded-[6px] bg-white flex flex-col gap-2 transition-[border-color,box-shadow] duration-150${applied ? " border-accent shadow-[0_0_0_3px_rgba(45,122,79,0.1)]" : " border-border"}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-[10px]">
-                        <span className="text-[0.6rem] px-[7px] py-[2px] bg-subtle rounded-[3px] text-muted">
-                          P{fix.priority}
-                        </span>
-                        <span className="text-[0.85rem] font-semibold text-dark">{fix.title}</span>
+                  <div key={fix.fix_id} style={{ ...styles.fixCard, ...(applied ? styles.fixCardApplied : {}) }}>
+                    <div style={styles.fixTop}>
+                      <div style={styles.fixTitleRow}>
+                        <span style={styles.fixPriority}>P{fix.priority}</span>
+                        <span style={styles.fixTitle}>{fix.title}</span>
                       </div>
-                      <div className="flex items-center gap-[14px]">
-                        <span className="text-[0.75rem] text-accent font-semibold">−{fix.estimated_risk_reduction} pts</span>
+                      <div style={styles.fixMeta}>
+                        <span style={styles.fixReduction}>−{fix.estimated_risk_reduction} pts</span>
                         <button
-                          className={`px-4 py-[7px] font-mono text-[0.7rem] border rounded-[4px] cursor-pointer${applied ? " bg-accent text-white border-accent" : " bg-transparent text-dark border-border"}`}
+                          style={{ ...styles.fixBtn, ...(applied ? styles.fixBtnApplied : {}) }}
                           onClick={() => toggleFix(fix.fix_id)}
                         >
                           {applied ? "✓ Applied" : "Apply Fix"}
                         </button>
                       </div>
                     </div>
-                    <p className="text-[0.78rem] text-muted m-0 leading-[1.55]">{fix.description}</p>
+                    <p style={styles.fixDesc}>{fix.description}</p>
                   </div>
                 );
               })}
@@ -233,22 +205,17 @@ export default function ReportSection({ scanData, selectedPathId }) {
           </div>
         )}
 
-        {/* Cypher tab */}
+        {/* ── Cypher tab ── */}
         {activeTab === "cypher" && (
-          <div className="flex flex-col gap-4 max-w-[800px]">
-            <div className="flex items-center justify-between">
-              <span className="text-[0.65rem] tracking-[0.12em] uppercase text-muted">Generated Cypher Query</span>
-              <button
-                className="px-4 py-[7px] font-mono text-[0.7rem] bg-transparent text-dark border border-border rounded-[4px] cursor-pointer"
-                onClick={() => navigator.clipboard.writeText(cypherQuery)}
-              >
+          <div style={styles.cypherBlock}>
+            <div style={styles.cypherHeader}>
+              <span style={styles.cypherLabel}>Generated Cypher Query</span>
+              <button style={styles.copyBtn} onClick={() => navigator.clipboard.writeText(cypherQuery)}>
                 Copy to clipboard
               </button>
             </div>
-            <pre className="bg-dark text-accent px-7 py-7 rounded-[6px] font-mono text-[0.78rem] leading-[1.85] overflow-x-auto m-0 whitespace-pre">
-              {cypherQuery}
-            </pre>
-            <p className="text-[0.73rem] text-muted m-0">
+            <pre style={styles.cypherCode}>{cypherQuery}</pre>
+            <p style={styles.cypherNote}>
               Paste this into Neo4j Browser to inspect the attack path in your graph database.
             </p>
           </div>
@@ -260,21 +227,16 @@ export default function ReportSection({ scanData, selectedPathId }) {
 
 function Block({ title, children }) {
   return (
-    <div className="flex flex-col gap-[14px]">
-      <div className="text-[0.62rem] tracking-[0.14em] uppercase text-muted pb-[10px] border-b border-border">
-        {title}
-      </div>
-      <div className="flex flex-col">{children}</div>
+    <div style={blockStyles.root}>
+      <div style={blockStyles.title}>{title}</div>
+      <div style={blockStyles.body}>{children}</div>
     </div>
   );
 }
 
 function FindingCard({ severity, children }) {
   return (
-    <div
-      className="px-4 py-3 border-l-[3px] bg-[#fafaf8] rounded-[0_5px_5px_0] mb-2"
-      style={{ borderLeftColor: SEVERITY_COLOR[severity] }}
-    >
+    <div style={{ ...findingStyles.card, borderLeftColor: SEVERITY_COLOR[severity] }}>
       {children}
     </div>
   );
@@ -299,3 +261,126 @@ WHERE n.id IN [${nodeIds}]
 RETURN n.id, n.name, n.label, n.severity, n.risk_score
 ORDER BY n.risk_score DESC;`;
 }
+
+const styles = {
+  root: { display: "flex", flexDirection: "column", minHeight: "calc(100vh - 53px)" },
+  empty: {
+    display: "flex", flexDirection: "column", alignItems: "center",
+    justifyContent: "center", minHeight: "calc(100vh - 53px)", gap: "16px",
+  },
+  emptyIcon: { fontSize: "2.5rem", color: "#1a1a18", opacity: 0.2 },
+  emptyTitle: { fontFamily: "'Fraunces', serif", fontSize: "1.6rem", color: "#1a1a18", opacity: 0.3, margin: 0 },
+  emptyText: { fontSize: "0.78rem", color: "#6b6860", margin: 0 },
+
+  banner: {
+    display: "flex", alignItems: "flex-start", justifyContent: "space-between",
+    padding: "40px 56px", borderLeft: "5px solid", flexWrap: "wrap", gap: "24px",
+  },
+  bannerLeft: { display: "flex", flexDirection: "column", gap: "10px", flex: 1 },
+  bannerSevLabel: { fontSize: "0.62rem", letterSpacing: "0.16em", fontWeight: 700 },
+  bannerTitle: {
+    fontFamily: "'Fraunces', serif", fontSize: "clamp(1.4rem, 2.5vw, 2rem)",
+    fontWeight: 400, letterSpacing: "-0.02em", color: "#1a1a18", margin: 0, lineHeight: 1.2,
+  },
+  bannerSummary: { fontSize: "0.85rem", color: "#6b6860", lineHeight: 1.65, margin: 0, maxWidth: "520px" },
+  bannerRight: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px", flexShrink: 0 },
+  bigScore: {
+    fontFamily: "'Fraunces', serif", fontSize: "5rem",
+    lineHeight: 1, color: "#1a1a18", letterSpacing: "-0.05em",
+  },
+  bigScoreLabel: { fontSize: "0.62rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#6b6860" },
+  confScore: { fontSize: "0.68rem", color: "#6b6860", marginTop: "4px" },
+
+  tabBar: { display: "flex", borderBottom: "1px solid #d4cfc6", padding: "0 56px" },
+  tab: {
+    padding: "14px 22px", fontFamily: "'DM Mono', monospace", fontSize: "0.75rem",
+    backgroundColor: "transparent", color: "#6b6860",
+    border: "none", borderBottom: "2px solid transparent",
+    cursor: "pointer", letterSpacing: "0.04em",
+  },
+  tabActive: { color: "#1a1a18", borderBottomColor: "#1a1a18" },
+
+  content: { flex: 1, padding: "48px 56px" },
+
+  reportGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "56px" },
+  reportCol: { display: "flex", flexDirection: "column", gap: "36px" },
+
+  prose: { fontSize: "0.85rem", color: "#3a3a38", lineHeight: 1.75, margin: 0 },
+  findingItem: { display: "flex", gap: "10px", marginBottom: "8px" },
+  findingBullet: { color: "#dd6b20", flexShrink: 0, marginTop: "1px" },
+  findingText: { fontSize: "0.82rem", color: "#3a3a38", lineHeight: 1.55 },
+
+  fileRow: {
+    display: "flex", alignItems: "center", gap: "10px",
+    padding: "8px 12px", backgroundColor: "#f0ece4", borderRadius: "4px", marginBottom: "6px",
+  },
+  fileIcon: { fontSize: "0.7rem", color: "#6b6860" },
+  fileName: { fontSize: "0.75rem", fontFamily: "'DM Mono', monospace", color: "#1a1a18" },
+
+  fcTitle: { fontSize: "0.82rem", fontWeight: 600, color: "#1a1a18", marginBottom: "4px" },
+  fcMeta: { fontSize: "0.7rem", color: "#6b6860" },
+
+  // Fixes
+  fixLayout: { display: "flex", flexDirection: "column", gap: "36px", maxWidth: "720px" },
+  scoreMeter: { padding: "28px", border: "1px solid #d4cfc6", borderRadius: "8px", backgroundColor: "#fff", display: "flex", flexDirection: "column", gap: "16px" },
+  scoreRow: { display: "flex", alignItems: "center", gap: "24px" },
+  scoreNum: { fontFamily: "'Fraunces', serif", fontSize: "3.5rem", lineHeight: 1, color: "#1a1a18", letterSpacing: "-0.04em" },
+  scoreNumLabel: { fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#6b6860", marginTop: "4px" },
+  scoreArrow: { fontSize: "1.4rem", color: "#6b6860" },
+  reductionNote: { fontSize: "0.72rem", color: "#2d7a4f", marginLeft: "auto" },
+  progressBar: { height: "6px", backgroundColor: "#f0ece4", borderRadius: "3px", overflow: "hidden" },
+  progressFill: { height: "100%", borderRadius: "3px", transition: "width 0.4s ease, background-color 0.4s ease" },
+
+  fixList: { display: "flex", flexDirection: "column", gap: "12px" },
+  fixCard: {
+    padding: "20px 22px", border: "1px solid #d4cfc6", borderRadius: "6px",
+    backgroundColor: "#fff", display: "flex", flexDirection: "column", gap: "8px",
+    transition: "border-color 0.15s, box-shadow 0.15s",
+  },
+  fixCardApplied: { borderColor: "#2d7a4f", boxShadow: "0 0 0 3px rgba(45,122,79,0.1)" },
+  fixTop: { display: "flex", alignItems: "center", justifyContent: "space-between" },
+  fixTitleRow: { display: "flex", alignItems: "center", gap: "10px" },
+  fixPriority: { fontSize: "0.6rem", padding: "2px 7px", backgroundColor: "#f0ece4", borderRadius: "3px", color: "#6b6860" },
+  fixTitle: { fontSize: "0.85rem", fontWeight: 600, color: "#1a1a18" },
+  fixMeta: { display: "flex", alignItems: "center", gap: "14px" },
+  fixReduction: { fontSize: "0.75rem", color: "#2d7a4f", fontWeight: 600 },
+  fixBtn: {
+    padding: "7px 16px", fontFamily: "'DM Mono', monospace", fontSize: "0.7rem",
+    backgroundColor: "transparent", color: "#1a1a18",
+    border: "1px solid #d4cfc6", borderRadius: "4px", cursor: "pointer",
+  },
+  fixBtnApplied: { backgroundColor: "#2d7a4f", color: "#fff", borderColor: "#2d7a4f" },
+  fixDesc: { fontSize: "0.78rem", color: "#6b6860", margin: 0, lineHeight: 1.55 },
+
+  // Cypher
+  cypherBlock: { display: "flex", flexDirection: "column", gap: "16px", maxWidth: "800px" },
+  cypherHeader: { display: "flex", alignItems: "center", justifyContent: "space-between" },
+  cypherLabel: { fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#6b6860" },
+  copyBtn: {
+    padding: "7px 16px", fontFamily: "'DM Mono', monospace", fontSize: "0.7rem",
+    backgroundColor: "transparent", color: "#1a1a18",
+    border: "1px solid #d4cfc6", borderRadius: "4px", cursor: "pointer",
+  },
+  cypherCode: {
+    backgroundColor: "#1a1a18", color: "#2d7a4f", padding: "28px",
+    borderRadius: "6px", fontFamily: "'DM Mono', monospace",
+    fontSize: "0.78rem", lineHeight: 1.85, overflowX: "auto", margin: 0, whiteSpace: "pre",
+  },
+  cypherNote: { fontSize: "0.73rem", color: "#6b6860", margin: 0 },
+};
+
+const blockStyles = {
+  root: { display: "flex", flexDirection: "column", gap: "14px" },
+  title: {
+    fontSize: "0.62rem", letterSpacing: "0.14em", textTransform: "uppercase",
+    color: "#6b6860", paddingBottom: "10px", borderBottom: "1px solid #d4cfc6",
+  },
+  body: { display: "flex", flexDirection: "column" },
+};
+
+const findingStyles = {
+  card: {
+    padding: "12px 16px", borderLeft: "3px solid",
+    backgroundColor: "#fafaf8", borderRadius: "0 5px 5px 0", marginBottom: "8px",
+  },
+};
