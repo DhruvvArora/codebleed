@@ -28,7 +28,7 @@ export default function HeroSection({
           </div>
 
           <h1 style={styles.heroTitle}>
-            Scan your repo.<br />
+            Scan your {"<"}Codebase{"/>"}<br />
             <em style={styles.heroItalic}>Find the blast radius.</em>
           </h1>
 
@@ -39,7 +39,7 @@ export default function HeroSection({
 
           {/* ── Input block ── */}
           <div style={styles.inputBlock}>
-            <label style={styles.label}>GitHub Repository URL</label>
+            <label style={styles.label}>Repository URL</label>
             <input
               style={styles.input}
               type="text"
