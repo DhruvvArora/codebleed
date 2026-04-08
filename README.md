@@ -122,19 +122,19 @@ That difference is what makes the system more useful for triage, demos, and futu
                         |
                         v
              +----------------------+
-             |  Ingestion Pipeline   |
+             |  Ingestion Pipeline  |
              +----------+-----------+
                         |
                         v
              +----------------------+
-             | Security Extraction   |
-             | secrets / deps / API  |
+             | Security Extraction  |
+             | secrets / deps / API |
              +----------+-----------+
                         |
                         v
              +----------------------+
-             |   Graph Assembly      |
-             |       Neo4j           |
+             |   Graph Assembly     |
+             |       Neo4j          |
              +----------+-----------+
                         |
           +-------------+-------------+
@@ -147,8 +147,8 @@ That difference is what makes the system more useful for triage, demos, and futu
             \                       /
              v                     v
               +-------------------+
-              |   Frontend Graph   |
-              | Visualization UI   |
+              |   Frontend Graph  |
+              | Visualization UI  |
               +-------------------+
 ```
 
@@ -208,7 +208,7 @@ This structure keeps the platform modular and makes it easier to extend individu
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/DhruvvArora/codebleed.git
 cd codebleed
 ```
 
@@ -383,19 +383,16 @@ CodeBleed addresses these by combining graph intelligence with explainable summa
 
 Built as a collaborative hackathon project.
 
-You can update this section with your team members' names and roles:
-- Pushkraj Kohok
 - Dhruv Arora
-- Add remaining contributors here
+- Pushkraj Kohok
 
 ---
 
 ## License
 
-Add the license you want for the repository, for example:
 - MIT
 - Apache 2.0
-- Proprietary / internal hackathon demo
+- Proprietary / Internal hackathon demo
 
 ---
 
