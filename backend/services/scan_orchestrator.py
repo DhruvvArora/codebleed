@@ -67,17 +67,8 @@ async def run_scan_pipeline(request: Any) -> Dict[str, Any]:
     security = extract_security_findings(ingestion)
     graph_request = GraphBuildRequest(ingestion_data=ingestion, security_data=security)
 
-    graph_build_status = "skipped"
+    graph_build_status = "local"
     graph_build_error = None
-    try:
-        from services.graph_build.graph_build_service import build_graph
-
-        build_graph(graph_request)
-        graph_build_status = "graph_built"
-    except Exception as exc:
-        graph_build_status = "graph_build_failed"
-        graph_build_error = str(exc)
-        logger.warning("Graph build failed, continuing with local graph payload: %s", exc)
 
     ui_graph = build_ui_graph(graph_request)
 
@@ -88,15 +79,8 @@ async def run_scan_pipeline(request: Any) -> Dict[str, Any]:
         include_fix_candidates=True,
     )
 
-    threat_status = "graph_query"
-    try:
-        from services.threat_intelligence.threat_query_service import perform_threat_analysis
-
-        threat = perform_threat_analysis(threat_request)
-    except Exception as exc:
-        threat_status = "fallback"
-        logger.warning("Threat intelligence query failed, using local fallback: %s", exc)
-        threat = build_fallback_threat_intelligence(ingestion, security)
+    threat_status = "local"
+    threat = build_fallback_threat_intelligence(ingestion, security)
 
     try:
         from services.ai_reasoning.ai_reasoning_service import perform_ai_reasoning
