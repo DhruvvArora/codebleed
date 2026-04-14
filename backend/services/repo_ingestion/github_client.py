@@ -1,9 +1,9 @@
 """
-RepoGuard — GitHub API client for repo ingestion.
+CodeBleed — GitHub API client for repo ingestion.
 
-Handles all external GitHub API calls.  Uses PyGithub for the
-authenticated/rich API and falls back to raw `requests` where needed.
-Keeps API concerns isolated from parsing/orchestration logic.
+Handles all external GitHub API calls. Uses PyGithub for the
+authenticated/rich API. Only public repositories are supported.
+Set GITHUB_TOKEN to avoid tight rate limits on the unauthenticated tier.
 """
 
 from __future__ import annotations
@@ -26,15 +26,13 @@ class GitHubClient:
     def __init__(self, token: Optional[str] = None):
         token = token or os.getenv("GITHUB_TOKEN")
         base_url = os.getenv("GITHUB_API_BASE_URL", "https://api.github.com")
-        
+
         if token:
             self._gh = Github(auth=Auth.Token(token), base_url=base_url)
-            logger.info(f"GitHub client initialised with token auth at {base_url}")
+            logger.info("GitHub client initialised with token auth.")
         else:
             self._gh = Github(base_url=base_url)
-            logger.warning(
-                f"GitHub client running WITHOUT token at {base_url} — rate limits will be tight"
-            )
+            logger.warning("GitHub client running WITHOUT token — rate limits will be tight.")
 
     # ── Repository metadata ────────────────────────────────────────
 
@@ -47,12 +45,13 @@ class GitHubClient:
         except GithubException as exc:
             if exc.status == 404:
                 raise ValueError(
-                    f"Repository not found: {owner}/{name}"
+                    f"Repository '{owner}/{name}' not found or is private. "
+                    "CodeBleed currently supports public repositories only."
                 ) from exc
             raise
 
     def get_repo_metadata(self, repo: GHRepo) -> dict[str, Any]:
-        """Return a flat dict of repo-level metadata (raw ingestion only)."""
+        """Return a flat dict of repo-level metadata."""
         return {
             "name": repo.name,
             "owner": repo.owner.login,
@@ -116,19 +115,18 @@ class GitHubClient:
         try:
             ref = ref or repo.default_branch
             content_file = repo.get_contents(file_path, ref=ref)
-            # get_contents can return a list for directories
             if isinstance(content_file, list):
                 return None
             return content_file.decoded_content.decode("utf-8", errors="replace")
         except GithubException:
             return None
 
-    # ── Tree listing (for dependency file discovery) ───────────────
+    # ── Tree listing ───────────────────────────────────────────────
 
     def get_root_tree_paths(
         self, repo: GHRepo, ref: Optional[str] = None
     ) -> list[str]:
-        """Return a flat list of file paths at the repo root level."""
+        """Return file paths at the repo root level."""
         ref = ref or repo.default_branch
         try:
             tree = repo.get_git_tree(ref, recursive=False)
