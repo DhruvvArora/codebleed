@@ -10,7 +10,7 @@ const SEVERITY_COLOR = {
 export default function HeroSection({
   onScan, loading, error, scanData, selectedPathId, onPathSelect, onViewReport,
 }) {
-  const [repoUrl, setRepoUrl] = useState("https://github.com/DhruvvArora/codebleed");
+  const [repoUrl, setRepoUrl] = useState("");
 
   const handleSubmit = () => { if (repoUrl.trim()) onScan(repoUrl.trim()); };
   const handleKey = (e) => { if (e.key === "Enter") handleSubmit(); };
@@ -27,13 +27,14 @@ export default function HeroSection({
             Threat Intelligence Platform
           </div>
 
+          {/* Two lines, each pinned to one line */}
           <h1 style={styles.heroTitle}>
-            Scan your {"<"}Codebase{"/>"}<br />
+            <span style={styles.heroLine1}>Scan your {"<"}Codebase{"/>"}</span>
             <em style={styles.heroItalic}>Find the blast radius.</em>
           </h1>
 
           <p style={styles.heroSub}>
-            Graph-powered security analysis for AI-assisted codebases.
+            AI-powered security analysis for LLM-assisted codebases.
             Uncover attack paths before someone else does.
           </p>
 
@@ -46,7 +47,7 @@ export default function HeroSection({
               value={repoUrl}
               onChange={(e) => setRepoUrl(e.target.value)}
               onKeyDown={handleKey}
-              placeholder="https://github.com/owner/repo"
+              placeholder="add your repository url here..."
               disabled={loading}
             />
             <button
@@ -59,13 +60,13 @@ export default function HeroSection({
             {error && <p style={styles.error}>{error}</p>}
           </div>
 
-          {/* ── Feature list — always visible ── */}
+          {/* ── Feature grid — 1×4 ── */}
           <div style={styles.featureList}>
             {[
-              ["◈", "Attack path graph", "Model your repo as a Neo4j threat graph"],
-              ["◎", "CVE matching", "Cross-reference deps against OSV.dev"],
-              ["◆", "Secret detection", "Regex-based secrets scanner across commits"],
-              ["▸", "AI reasoning", "RocketRide AI generates prioritized fix reports"],
+              ["◈", "Attack path analysis", "Trace dangerous paths from entry points to sensitive assets."],
+              ["◎", "CVE matching", "Cross-reference deps against known vulnerability databases."],
+              ["◆", "Secret detection", "Regex-based secrets scanner across commits and files."],
+              ["▸", "AI reasoning", "GPT-4o generates prioritized, actionable fix reports."],
             ].map(([icon, title, desc], i, arr) => (
               <div
                 key={title}
@@ -86,7 +87,7 @@ export default function HeroSection({
         </div>
       </div>
 
-      {/* ── Bottom panel (attack paths / top risks) ── */}
+      {/* ── Bottom panel ── */}
       <div style={styles.bottomPanel}>
         {!scanData && !loading && (
           <div style={styles.emptyRight}>
@@ -109,7 +110,7 @@ export default function HeroSection({
             </svg>
             <p style={styles.emptyHeading}>Attack paths will appear here</p>
             <p style={styles.emptyDesc}>
-              After scanning, CodeBleed maps your repo as a threat graph and surfaces
+              After scanning, Omen maps your repo as a threat graph and surfaces
               the most dangerous paths from entry points to sensitive assets.
             </p>
           </div>
@@ -197,7 +198,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "80px 32px",
+    padding: "60px 32px 48px",
     boxSizing: "border-box",
   },
   heroInner: {
@@ -205,43 +206,57 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     textAlign: "center",
-    gap: "36px",
+    gap: "28px",
     width: "100%",
     maxWidth: "1320px",
     margin: "0 auto",
   },
 
   eyebrow: {
-    display: "flex", alignItems: "center", gap: "10px",
-    fontSize: "1.1rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#2d7a4f",
+    display: "flex", alignItems: "center", gap: "10px", marginTop: "20px", marginBottom: "30px",
+    fontSize: "0.95rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#2d7a4f",
+    border: "1px solid #2d7a4f",
+    borderRadius: "30px",
+    padding: "6px 12px"
   },
   eyebrowDot: {
-    width: "8px", height: "8px", borderRadius: "50%",
+    width: "7px", height: "7px", borderRadius: "50%",
     backgroundColor: "#2d7a4f", display: "inline-block", flexShrink: 0,
   },
 
   heroTitle: {
     fontFamily: "'Fraunces', serif",
-    fontSize: "clamp(3rem, 5vw, 5.2rem)",
+    fontSize: "clamp(2rem, 3.5vw, 4rem)",
     fontWeight: 400,
-    lineHeight: 1.02,
+    lineHeight: 1.06,
     letterSpacing: "-0.03em",
     color: "#1a1a18",
     margin: 0,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "4px",
+    marginBottom: "20px",
   },
+
+  heroLine1: {
+    whiteSpace: "nowrap",
+    display: "block",
+  },
+
   heroItalic: {
     fontStyle: "italic",
     color: "#2d7a4f",
     whiteSpace: "nowrap",
-    display: "inline-block",
+    display: "block",
   },
 
   heroSub: {
-    fontSize: "clamp(1.05rem, 1.6vw, 1.3rem)",
+    fontSize: "clamp(0.9rem, 1.3vw, 1.1rem)",
     color: "#6b6860",
     lineHeight: 1.7,
-    maxWidth: "540px",
-    margin: 0,
+    maxWidth: "660px",
+    marginBottom: "30px",
   },
 
   /* ── Input ── */
@@ -250,21 +265,21 @@ const styles = {
     flexDirection: "column",
     gap: "12px",
     width: "100%",
-    maxWidth: "700px",
+    maxWidth: "580px",
   },
   label: {
-    fontSize: "1rem", letterSpacing: "0.12em",
+    fontSize: "0.85rem", letterSpacing: "0.12em",
     textTransform: "uppercase", color: "#6b6860", textAlign: "left",
   },
   input: {
-    width: "100%", padding: "16px 20px",
-    fontFamily: "'DM Mono', monospace", fontSize: "0.95rem",
+    width: "100%", padding: "15px 20px",
+    fontFamily: "'DM Mono', monospace", fontSize: "0.9rem",
     backgroundColor: "#fff", border: "1px solid #d4cfc6", borderRadius: "5px",
     color: "#1a1a18", outline: "none", boxSizing: "border-box",
   },
   btn: {
-    padding: "18px 0",
-    fontFamily: "'DM Mono', monospace", fontSize: "1.05rem",
+    padding: "16px 0",
+    fontFamily: "'DM Mono', monospace", fontSize: "0.95rem",
     backgroundColor: "#1a1a18", color: "#f5f2eb",
     border: "none", borderRadius: "5px", cursor: "pointer",
     letterSpacing: "0.06em", width: "100%",
@@ -272,7 +287,7 @@ const styles = {
   btnDisabled: { opacity: 0.5, cursor: "not-allowed" },
   error: { fontSize: "0.82rem", color: "#e53e3e", margin: 0, textAlign: "left" },
 
-  /* ── Features — always visible, 1×4 horizontal ── */
+  /* ── Feature grid — 1×4 ── */
   featureList: {
     display: "grid",
     gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
@@ -283,25 +298,34 @@ const styles = {
     boxSizing: "border-box",
     textAlign: "left",
     borderTop: "1px solid #d4cfc6",
-    paddingTop: "32px",
+    paddingTop: "28px",
+    marginTop: "16px",
   },
   featureRow: {
     display: "flex",
-    gap: "14px",
+    gap: "12px",
     alignItems: "flex-start",
-    padding: "0 28px",
+    padding: "0 24px",
     minWidth: 0,
     borderRight: "1px solid #d4cfc6",
   },
-  featureIcon: { fontSize: "1.2rem", color: "#2d7a4f", marginTop: "3px", flexShrink: 0 },
+  featureIcon: {
+    fontSize: "0.95rem",
+    color: "#2d7a4f",
+    flexShrink: 0,
+    /* Nudge icon down to sit on the same baseline as the title's cap-height */
+    marginTop: "3px",
+    lineHeight: 1,
+  },
   featureTitle: {
-    fontSize: "1.08rem",
+    fontSize: "0.95rem",
     color: "#1a1a18",
     fontWeight: 500,
-    marginBottom: "6px",
+    marginBottom: "5px",
+    lineHeight: "1.5",
   },
   featureDesc: {
-    fontSize: "0.95rem",
+    fontSize: "0.82rem",
     color: "#6b6860",
     lineHeight: 1.55,
   },
@@ -314,15 +338,15 @@ const styles = {
   emptyRight: {
     display: "flex", flexDirection: "column",
     alignItems: "center", justifyContent: "center",
-    padding: "80px 60px", textAlign: "center", gap: "20px",
+    padding: "72px 60px", textAlign: "center", gap: "20px",
   },
   emptyHeading: {
-    fontFamily: "'Fraunces', serif", fontSize: "1.8rem",
+    fontFamily: "'Fraunces', serif", fontSize: "1.6rem",
     color: "#1a1a18", letterSpacing: "-0.02em", margin: 0,
   },
   emptyDesc: { fontSize: "0.85rem", color: "#6b6860", lineHeight: 1.7, maxWidth: "400px", margin: 0 },
   pulsingRing: {
-    width: "56px", height: "56px", borderRadius: "50%",
+    width: "52px", height: "52px", borderRadius: "50%",
     border: "2px solid #2d7a4f", animation: "spin 2s linear infinite", opacity: 0.5,
   },
 

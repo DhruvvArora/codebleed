@@ -4,7 +4,7 @@ import HeroSection from "./components/HeroSection";
 import GraphSection from "./components/GraphSection";
 import ReportSection from "./components/ReportSection";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function App() {
   const [scanData, setScanData] = useState(null);
@@ -34,12 +34,10 @@ export default function App() {
 
       setScanData(data);
 
-      // Auto-select first attack path
       if (data.attack_paths?.length > 0) {
         setSelectedPathId(data.attack_paths[0].path_id);
       }
 
-      // Scroll to graph after scan
       setTimeout(() => {
         graphRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 300);
@@ -61,15 +59,14 @@ export default function App() {
 
   return (
     <div style={styles.root}>
-      {/* ── Noise texture overlay ── */}
       <div style={styles.noise} />
 
-      {/* ── Header bar ── */}
+      {/* ── Header ── */}
       <header style={styles.header}>
         <span style={styles.logo}>
-          <span style={styles.logoDot}>▸</span> CodeBleed
+          <span style={styles.logoDot}>▸</span> Omen
         </span>
-        <span style={styles.headerTag}>Threat Intelligence · HackWithChicago 3.0</span>
+        <span style={styles.headerBadge}>Threat Intelligence</span>
       </header>
 
       {/* ── Section 1: Hero / Scan ── */}
@@ -145,11 +142,14 @@ const styles = {
     color: "#2d7a4f",
     fontSize: "1rem",
   },
-  headerTag: {
-    fontSize: "0.65rem",
+  headerBadge: {
+    fontSize: "0.6rem",
     color: "#2d7a4f",
-    letterSpacing: "0.12em",
+    letterSpacing: "0.14em",
     textTransform: "uppercase",
+    border: "1px solid #2d7a4f",
+    borderRadius: "3px",
+    padding: "4px 10px",
   },
   section: {
     position: "relative",
