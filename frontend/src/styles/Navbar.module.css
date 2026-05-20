@@ -1,0 +1,46 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #111110;
+  border-bottom: 1px solid #2d7a4f;
+}
+
+/* Inner container mirrors memory.store centered nav */
+.inner {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 40px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: 'Fraunces', serif;
+  font-size: 1.2rem;
+  color: #f8f7f4;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.logoDot {
+  color: #2d7a4f;
+  font-size: 0.95rem;
+}
+
+.badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  color: #2d7a4f;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid #2d7a4f;
+  border-radius: 3px;
+  padding: 4px 10px;
+}
