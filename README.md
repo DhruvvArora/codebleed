@@ -1,12 +1,12 @@
-# CodeBleed
+# Omen
 
-**CodeBleed** is a cybersecurity intelligence platform for modern codebases. It scans repositories, builds a graph of files, developers, dependencies, endpoints, and security findings, then surfaces hidden attack paths that traditional point-in-time scanners often miss.
+**Omen** is a cybersecurity intelligence platform for modern codebases. It scans repositories, builds a graph of files, developers, dependencies, endpoints, and security findings, then surfaces hidden attack paths that traditional point-in-time scanners often miss.
 
 Built for hackathon-style speed but designed with long-term extensibility in mind, CodeBleed combines repository ingestion, graph-based reasoning, and AI-assisted prioritization to help teams understand **where risk exists, why it matters, and what to fix first**.
 
 ---
 
-## Why CodeBleed?
+## Why Omen?
 
 In fast-moving development environments, especially with AI-assisted coding, repositories grow quickly and security review often becomes reactive.
 
