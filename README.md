@@ -2,7 +2,7 @@
 
 **Omen** is a cybersecurity intelligence platform for modern codebases. It scans repositories, builds a graph of files, developers, dependencies, endpoints, and security findings, then surfaces hidden attack paths that traditional point-in-time scanners often miss.
 
-Built for hackathon-style speed but designed with long-term extensibility in mind, CodeBleed combines repository ingestion, graph-based reasoning, and AI-assisted prioritization to help teams understand **where risk exists, why it matters, and what to fix first**.
+Built for hackathon-style speed but designed with long-term extensibility in mind, Omen combines repository ingestion, graph-based reasoning, and AI-assisted prioritization to help teams understand **where risk exists, why it matters, and what to fix first**.
 
 ---
 
@@ -18,7 +18,7 @@ Most tools can flag isolated issues such as:
 
 But real-world compromise usually happens through **connected weaknesses**, not isolated ones.
 
-CodeBleed addresses that gap by modeling a repository as a **knowledge graph** and identifying exploitable relationships between:
+Omen addresses that gap by modeling a repository as a **knowledge graph** and identifying exploitable relationships between:
 - code files
 - developers and commit history
 - dependencies and CVEs
@@ -29,7 +29,7 @@ CodeBleed addresses that gap by modeling a repository as a **knowledge graph** a
 
 ## By the numbers
 
-The security problem CodeBleed addresses is not theoretical. It is already visible in how modern software is being written and where risk is showing up:
+The security problem Omen addresses is not theoretical. It is already visible in how modern software is being written and where risk is showing up:
 
 - **46% of code** in files where GitHub Copilot was enabled was completed by Copilot; in Java, that number reached **61%**.[^1]
 - **97% of surveyed developers** reported having used AI coding tools at work at some point.[^2]
@@ -39,23 +39,23 @@ The security problem CodeBleed addresses is not theoretical. It is already visib
 - A USENIX study on package hallucinations found rates of **5.2% for commercial models** and **21.7% for open-source models**, including **205,474 unique hallucinated package names**.[^7]
 - A 2026 large-scale study of AI-authored commits across real GitHub repositories identified **484,606 introduced issues** across **3,841 repositories**, based on **304,362 verified AI-authored commits** from **6,275 repositories**.[^8]
 
-These numbers are exactly why CodeBleed focuses on more than isolated alerts. When AI-assisted development increases code volume, dependency sprawl, and review pressure, security issues stop being single findings and start becoming **connected attack paths**.
+These numbers are exactly why Omen focuses on more than isolated alerts. When AI-assisted development increases code volume, dependency sprawl, and review pressure, security issues stop being single findings and start becoming **connected attack paths**.
 
-### What CodeBleed is built to quantify in a scan
+### What Omen is built to quantify in a scan
 
-CodeBleed helps make these risks visible by mapping and connecting:
+Omen helps make these risks visible by mapping and connecting:
 - **secret exposure** (tokens, credentials, hardcoded secrets)
 - **dependency risk** (vulnerable packages, CVEs, and risky third-party links)
 - **attack surface** (dangerous endpoints and externally reachable components)
 - **graph-connected attack paths** that show how multiple low-level findings can combine into a realistic exploit route
 
-Rather than only saying **"a vulnerability exists,"** CodeBleed is designed to show **where it sits, what it connects to, and why it matters first**.
+Rather than only saying **"a vulnerability exists,"** Omen is designed to show **where it sits, what it connects to, and why it matters first**.
 
 ---
 
 ## What the platform does
 
-CodeBleed helps teams:
+Omen helps teams:
 - scan a GitHub repository or local codebase
 - extract security-relevant entities and relationships
 - assemble them into a graph structure in Neo4j
@@ -71,7 +71,7 @@ CodeBleed helps teams:
 Traditional scanners answer:
 > “What vulnerabilities exist?”
 
-CodeBleed goes a step further and answers:
+Omen goes a step further and answers:
 > “How can these issues connect into an actual attack route?”
 
 That difference is what makes the system more useful for triage, demos, and future productization.
@@ -179,7 +179,7 @@ That difference is what makes the system more useful for triage, demos, and futu
 ## Project structure
 
 ```text
-codebleed/
+Omen/
 ├── frontend/      # UI for scan submission, results, and graph visualization
 ├── backend/       # FastAPI services, scanning pipeline, graph logic, APIs
 ├── resources/     # Supporting assets, sample data, or local resources
@@ -208,8 +208,8 @@ This structure keeps the platform modular and makes it easier to extend individu
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/DhruvvArora/codebleed.git
-cd codebleed
+git clone https://github.com/DhruvvArora/omen.git
+cd Omen
 ```
 
 ### 2. Set up the backend
@@ -293,7 +293,7 @@ The frontend then shows:
 
 ## Example use cases
 
-CodeBleed can be useful for:
+Omen can be useful for:
 - hackathon demos
 - security reviews of new projects
 - repository risk exploration
@@ -307,7 +307,7 @@ CodeBleed can be useful for:
 
 Many tools stop at scanning.
 
-CodeBleed focuses on **security context**:
+Omen focuses on **security context**:
 - not just *what* is wrong
 - but *how* multiple issues connect
 - and *which* fixes reduce the most risk first
@@ -322,13 +322,15 @@ That makes it especially valuable for:
 
 ## Current status
 
-CodeBleed is currently a prototype / hackathon project and is designed to demonstrate:
+Omen is currently a prototype / hackathon project and is designed to demonstrate:
 - repository-to-graph transformation
 - attack-path-centric security analysis
 - explainable prioritization using AI
 - interactive graph-based visualization
 
 Future iterations can extend it into a fuller platform with:
+- code efficiency
+- code torage reduction
 - real-time rescans
 - background job queues
 - team dashboards
@@ -352,20 +354,6 @@ Potential next steps include:
 
 ---
 
-## Demo talking points
-
-When presenting CodeBleed, emphasize these three ideas:
-
-### 1. Repositories are connected systems
-A repo is not just a folder of files. It is a living network of people, code, dependencies, and exposures.
-
-### 2. Real attacks follow paths
-Attackers exploit chains, not isolated findings.
-
-### 3. Visualization improves actionability
-Seeing the path makes the risk easier to understand, explain, and fix.
-
----
 
 ## Challenges addressed
 
@@ -375,34 +363,17 @@ This project tackles several practical challenges:
 - prioritization is hard when all alerts look equally urgent
 - security demos often lack a strong visual reasoning layer
 
-CodeBleed addresses these by combining graph intelligence with explainable summaries.
-
----
-
-## Contributors
-
-Built as a collaborative hackathon project.
-
-- Dhruv Arora
-- Pushkraj Kohok
-
----
-
-## License
-
-- MIT
-- Apache 2.0
-- Proprietary / Internal hackathon demo
+Omen addresses these by combining graph intelligence with explainable summaries.
 
 ---
 
 ## Closing note
 
-CodeBleed is built around a simple belief:
+Omen is built around a simple belief:
 
 **Security tools should not just list problems. They should help people understand risk as a connected story.**
 
-That is the purpose of CodeBleed.
+That is the purpose of Omen.
 
 ---
 
