@@ -67,9 +67,9 @@ export default function App() {
       {/* ── Header bar ── */}
       <header style={styles.header}>
         <span style={styles.logo}>
-          <span style={styles.logoDot}>▸</span> CodeBleed
+          <span style={styles.logoDot}>▸</span> Omen
         </span>
-        <span style={styles.headerTag}>Threat Intelligence · HackWithChicago 3.0</span>
+        <span style={styles.headerTag}>AI Threat Intelligence System</span>
       </header>
 
       {/* ── Section 1: Hero / Scan ── */}

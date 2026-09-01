@@ -1,120 +1,88 @@
 # Omen
 
-**Omen** is a cybersecurity intelligence platform for modern codebases. It scans repositories, builds a graph of files, developers, dependencies, endpoints, and security findings, then surfaces hidden attack paths that traditional point-in-time scanners often miss.
+**Omen** is a graph-based security analysis platform for codebases. It scans a repository, models it as a Neo4j threat graph, and surfaces connected attack paths that point-in-time scanners miss.
 
-Built for hackathon-style speed but designed with long-term extensibility in mind, Omen combines repository ingestion, graph-based reasoning, and AI-assisted prioritization to help teams understand **where risk exists, why it matters, and what to fix first**.
+Most scanners answer *"what vulnerabilities exist?"* and hand you a flat list ranked by severity. That list says nothing about whether a finding is reachable. Omen answers *"how do these issues connect into an actual attack route?"* by making the relationships between code, dependencies, secrets, and exposed endpoints queryable.
+
+![Omen threat graph](docs/images/threat-graph.png)
+
+*A scanned repository as a threat graph: 187 nodes, 399 edges across files, commits, dependencies, vulnerabilities, secrets, and endpoints.*
 
 ---
 
-## Why Omen?
+## Why graph-based analysis
 
-In fast-moving development environments, especially with AI-assisted coding, repositories grow quickly and security review often becomes reactive.
+In fast-moving development environments, especially with AI-assisted coding, repositories grow quickly and security review becomes reactive.
 
-Most tools can flag isolated issues such as:
-- exposed secrets
-- vulnerable dependencies
-- insecure endpoints
-- risky commits
+Most tools flag isolated issues: exposed secrets, vulnerable dependencies, insecure endpoints, risky commits. But real-world compromise usually happens through **connected weaknesses**, not isolated ones. A medium-severity CVE on an internet-facing path matters more than a critical one buried behind three internal services, and a flat severity list cannot express that difference.
 
-But real-world compromise usually happens through **connected weaknesses**, not isolated ones.
-
-Omen addresses that gap by modeling a repository as a **knowledge graph** and identifying exploitable relationships between:
-- code files
-- developers and commit history
-- dependencies and CVEs
-- endpoints and exposed surfaces
-- findings that can combine into larger attack paths
+Omen models the repository as a knowledge graph so those relationships become traversable.
 
 ---
 
 ## By the numbers
 
-The security problem Omen addresses is not theoretical. It is already visible in how modern software is being written and where risk is showing up:
+The problem is not theoretical. It is visible in how modern software is being written and where risk is showing up:
 
-- **46% of code** in files where GitHub Copilot was enabled was completed by Copilot; in Java, that number reached **61%**.[^1]
-- **97% of surveyed developers** reported having used AI coding tools at work at some point.[^2]
+- **46% of code** in files where GitHub Copilot was enabled was completed by Copilot; in Java, **61%**.[^1]
+- **97% of surveyed developers** reported having used AI coding tools at work.[^2]
 - **39 million+ secrets** were leaked across GitHub in **2024 alone**.[^3]
-- **45% of AI-generated code tasks** tested by Veracode introduced a known security flaw; in its Spring 2026 update, secure completion was still only **55%** overall.[^4][^5]
-- Georgetown CSET found that **almost half** of code snippets produced by five LLMs contained bugs that could potentially lead to malicious exploitation.[^6]
+- **45% of AI-generated code tasks** tested by Veracode introduced a known security flaw; in its Spring 2026 update, secure completion was still only **55%**.[^4][^5]
+- Georgetown CSET found that **almost half** of code snippets produced by five LLMs contained bugs that could lead to malicious exploitation.[^6]
 - A USENIX study on package hallucinations found rates of **5.2% for commercial models** and **21.7% for open-source models**, including **205,474 unique hallucinated package names**.[^7]
-- A 2026 large-scale study of AI-authored commits across real GitHub repositories identified **484,606 introduced issues** across **3,841 repositories**, based on **304,362 verified AI-authored commits** from **6,275 repositories**.[^8]
+- A 2026 large-scale study of AI-authored commits identified **484,606 introduced issues** across **3,841 repositories**, from **304,362 verified AI-authored commits**.[^8]
 
-These numbers are exactly why Omen focuses on more than isolated alerts. When AI-assisted development increases code volume, dependency sprawl, and review pressure, security issues stop being single findings and start becoming **connected attack paths**.
-
-### What Omen is built to quantify in a scan
-
-Omen helps make these risks visible by mapping and connecting:
-- **secret exposure** (tokens, credentials, hardcoded secrets)
-- **dependency risk** (vulnerable packages, CVEs, and risky third-party links)
-- **attack surface** (dangerous endpoints and externally reachable components)
-- **graph-connected attack paths** that show how multiple low-level findings can combine into a realistic exploit route
-
-Rather than only saying **"a vulnerability exists,"** Omen is designed to show **where it sits, what it connects to, and why it matters first**.
+When AI-assisted development increases code volume, dependency sprawl, and review pressure, security issues stop being single findings and start becoming connected attack paths.
 
 ---
 
-## What the platform does
+## Graph schema
 
-Omen helps teams:
-- scan a GitHub repository or local codebase
-- extract security-relevant entities and relationships
-- assemble them into a graph structure in Neo4j
-- identify possible attack paths across the repository
-- prioritize findings based on context, connectivity, and severity
-- provide AI-assisted explanations and remediation suggestions
-- visualize the full security graph interactively
+Omen models a repository using **9 node types**:
 
----
+| Node | Represents |
+| --- | --- |
+| `Repository` | The scanned codebase root |
+| `Developer` | Commit authors and contributors |
+| `Commit` | Individual commits and their metadata |
+| `File` | Source files within the repository |
+| `Dependency` | Third-party packages and versions |
+| `Vulnerability` | CVEs and known package advisories |
+| `Secret` | Detected credentials, tokens, and keys |
+| `Endpoint` | Exposed or externally reachable surfaces |
+| `RiskFinding` | Derived findings from graph analysis |
 
-## Core idea
-
-Traditional scanners answer:
-> “What vulnerabilities exist?”
-
-Omen goes a step further and answers:
-> “How can these issues connect into an actual attack route?”
-
-That difference is what makes the system more useful for triage, demos, and future productization.
+Relationships connect these into traversable paths, so a query can move from an exposed endpoint through the file that serves it, to the dependency it pulls in, to the CVE affecting that dependency.
 
 ---
 
-## Key features
+## What it does
 
-### 1. Smart repository ingestion
-- Accepts repository input from GitHub or local source
-- Pulls code structure and metadata
-- Captures developer and commit context where available
+- Scans a GitHub repository or local codebase
+- Extracts security-relevant entities: secrets, dependencies, endpoints, commit history
+- Enriches dependency findings against public vulnerability data (OSV.dev)
+- Assembles everything into a Neo4j graph
+- Traverses the graph to identify attack paths and blast radius
+- Layers AI reasoning over graph query output to produce prioritized, plain-language reports
+- Visualizes the full graph interactively
 
-### 2. Security extraction
-- Scans for secrets and sensitive patterns
-- Identifies vulnerable dependencies
-- Detects publicly exposed or risky surfaces
-- Enriches dependency issues with public vulnerability intelligence
-
-### 3. Graph assembly in Neo4j
-- Converts extracted entities into nodes and relationships
-- Builds a repository-centric knowledge graph
-- Makes complex risk paths queryable and visualizable
-
-### 4. Attack path discovery
-- Uses graph traversal logic to find likely exploit routes
-- Highlights chains of connected weaknesses rather than isolated alerts
-
-### 5. AI-assisted synthesis
-- Summarizes graph findings in plain English
-- Explains why a path is risky
-- Suggests prioritized remediation steps
-
-### 6. Interactive visualization
-- Displays nodes and relationships in a graph UI
-- Makes it easy to demonstrate how code, developers, dependencies, and findings connect
-- Supports risk storytelling during demos and reviews
+![Scan entry point](docs/images/scan-input.png)
 
 ---
 
-## High-level architecture
+## Severity and risk scoring
 
-```text
+Findings carry both a severity classification and a numeric risk score derived from graph context, not from CVSS alone. A dependency vulnerability that sits on a reachable path scores higher than an equivalent one that does not.
+
+![Scored finding](docs/images/risk-scoring.png)
+
+*A high-severity dependency vulnerability surfaced with its risk score in graph context.*
+
+---
+
+## Architecture
+
+```
              +----------------------+
              |   GitHub / Local     |
              |     Repository       |
@@ -152,82 +120,52 @@ That difference is what makes the system more useful for triage, demos, and futu
               +-------------------+
 ```
 
+The backend degrades gracefully: if the AI reasoning layer is unavailable, the API falls back to technical graph output rather than failing the request, so the frontend always renders.
+
 ---
 
 ## Tech stack
 
-### Frontend
-- React
-- TypeScript
-- Graph visualization library for relationship mapping
+**Frontend:** React, TypeScript, Vite, graph visualization layer
+**Backend:** Python, FastAPI, Uvicorn, Pydantic v2 schemas
+**Graph:** Neo4j
+**Intelligence:** repository parsing pipeline, OSV.dev vulnerability enrichment, LLM reasoning layer
 
-### Backend
-- FastAPI
-- Python
-- Uvicorn
-
-### Data / Graph layer
-- Neo4j
-
-### Security / intelligence
-- Repository parsing and scanning pipeline
-- Vulnerability enrichment from public sources
-- AI reasoning layer for prioritization and explanation
+Frontend and backend are developed against strict shared JSON contracts, which lets both sides move in parallel without integration drift.
 
 ---
 
 ## Project structure
 
-```text
+```
 Omen/
 ├── frontend/      # UI for scan submission, results, and graph visualization
 ├── backend/       # FastAPI services, scanning pipeline, graph logic, APIs
-├── resources/     # Supporting assets, sample data, or local resources
 └── README.md
 ```
-
-This structure keeps the platform modular and makes it easier to extend individual layers independently.
-
----
-
-## How it works
-
-1. A user submits a GitHub repository URL or a local repository.
-2. The backend ingests the codebase and collects metadata.
-3. Security extraction services identify relevant issues and signals.
-4. The system converts findings into graph nodes and edges.
-5. Neo4j stores and connects these relationships.
-6. Attack path logic traverses the graph to identify risky routes.
-7. The AI layer summarizes the most important findings.
-8. The frontend displays the results in an interactive graph view.
 
 ---
 
 ## Setup
 
-### 1. Clone the repository
+### 1. Clone
 
 ```bash
-git clone https://github.com/DhruvvArora/omen.git
+git clone https://github.com/DhruvvArora/Omen.git
 cd Omen
 ```
 
-### 2. Set up the backend
+### 2. Backend
 
 ```bash
 cd backend
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-```
-
-Run the backend:
-
-```bash
 uvicorn main:app --reload --port 8000
 ```
 
-### 3. Set up the frontend
+### 3. Frontend
 
 ```bash
 cd ../frontend
@@ -235,22 +173,15 @@ npm install
 npm run dev
 ```
 
-### 4. Start Neo4j
+### 4. Neo4j
 
-Use either:
-- Neo4j Desktop
-- Neo4j Aura
-- a local Docker setup
+Run via Neo4j Desktop, Neo4j Aura, or Docker. The backend reaches it through environment variables.
 
-Make sure the backend can access the Neo4j instance through environment variables.
+### Environment variables
 
----
+Create a `.env` in `backend/`:
 
-## Environment variables
-
-Create a `.env` file for the backend and configure values similar to the following:
-
-```env
+```
 GITHUB_TOKEN=your_github_token
 NEO4J_URI=bolt://localhost:7687
 NEO4J_USERNAME=neo4j
@@ -258,122 +189,34 @@ NEO4J_PASSWORD=your_password
 AI_API_KEY=your_model_api_key
 ```
 
-Notes:
-- `GITHUB_TOKEN` is strongly recommended to avoid strict GitHub rate limits.
-- If you are using a hosted Neo4j database, update the URI accordingly.
-- Replace `AI_API_KEY` with the key used by your reasoning layer.
+`GITHUB_TOKEN` is strongly recommended to avoid GitHub rate limits.
 
 ---
 
-## Example workflow
+## How a scan works
 
-### Submit a scan
-A user provides a repository such as:
-
-```text
-https://github.com/example/project
-```
-
-### Backend processing
-The system:
-- clones or reads the repository
-- extracts files, dependencies, and metadata
-- scans for findings
-- builds graph relationships
-- runs attack path analysis
-
-### Output
-The frontend then shows:
-- connected nodes and relationships
-- severity-aware findings
-- attack path explanations
-- prioritized fixes
+1. User submits a repository URL or local path
+2. Backend ingests the codebase and collects file, commit, and dependency metadata
+3. Extraction services scan for secrets, vulnerable dependencies, and exposed endpoints
+4. Findings become graph nodes and edges in Neo4j
+5. Traversal logic identifies attack paths across connected findings
+6. The AI layer summarizes and prioritizes what matters most
+7. The frontend renders the graph, the findings, and the report
 
 ---
 
-## Example use cases
+## Status
 
-Omen can be useful for:
-- hackathon demos
-- security reviews of new projects
-- repository risk exploration
-- prioritizing fixes in fast-moving teams
-- showing why a vulnerability matters in context
-- developer education through graph-based explanations
+Omen is an active prototype. The scanning pipeline, graph assembly, traversal, and visualization are working end to end. Current work is on the remediation side: fix simulation, secure refactor suggestions, and sharper risk ranking.
 
----
+Planned next:
 
-## What makes it different
-
-Many tools stop at scanning.
-
-Omen focuses on **security context**:
-- not just *what* is wrong
-- but *how* multiple issues connect
-- and *which* fixes reduce the most risk first
-
-That makes it especially valuable for:
-- demo storytelling
-- triage workflows
-- attack-path-driven remediation
-- visual security reasoning
-
----
-
-## Current status
-
-Omen is currently a prototype / hackathon project and is designed to demonstrate:
-- repository-to-graph transformation
-- attack-path-centric security analysis
-- explainable prioritization using AI
-- interactive graph-based visualization
-
-Future iterations can extend it into a fuller platform with:
-- code efficiency
-- code torage reduction
-- real-time rescans
-- background job queues
-- team dashboards
-- scan history and comparisons
-- policy-based risk scoring
-- multi-repo intelligence
-
----
-
-## Future improvements
-
-Potential next steps include:
-- stronger secret scanning heuristics
-- richer dependency intelligence and CVE mapping
-- better attack path ranking algorithms
-- historical commit risk analysis
-- developer ownership mapping
-- improved graph filtering and search in the UI
-- support for async scan pipelines and status polling
-- exportable reports for security teams
-
----
-
-
-## Challenges addressed
-
-This project tackles several practical challenges:
-- security findings are often noisy and disconnected
-- repository context is difficult to understand quickly
-- prioritization is hard when all alerts look equally urgent
-- security demos often lack a strong visual reasoning layer
-
-Omen addresses these by combining graph intelligence with explainable summaries.
-
----
-
-## Closing note
-
-Omen is built around a simple belief:
-
-**Security tools should not just list problems. They should help people understand risk as a connected story.**
-
-That is the purpose of Omen.
+- Stronger secret scanning heuristics
+- Richer CVE mapping and dependency intelligence
+- Better attack path ranking
+- Historical commit risk analysis
+- Async scan pipelines with status polling
+- Exportable reports
 
 ---
 
@@ -381,10 +224,9 @@ That is the purpose of Omen.
 
 [^1]: GitHub, [*How companies are boosting productivity with generative AI*](https://github.blog/ai-and-ml/generative-ai/how-companies-are-boosting-productivity-with-generative-ai/) (May 2023).
 [^2]: GitHub, [*Survey: The AI wave continues to grow on software development teams*](https://github.blog/news-insights/research/survey-ai-wave-grows/) (Aug 2024).
-[^3]: GitHub, [*GitHub found 39M secret leaks in 2024. Here's what we're doing to help*](https://github.blog/security/application-security/next-evolution-github-advanced-security/) (Apr 2025).
-[^4]: Veracode, [*We Asked 100+ AI Models to Write Code. Here's How Many Failed Security Tests*](https://www.veracode.com/blog/genai-code-security-report/) (Jul 2025).
-[^5]: Veracode, [*Spring 2026 GenAI Code Security Update: Despite Claims, AI Models Are Still Failing Security*](https://www.veracode.com/blog/spring-2026-genai-code-security/) (Mar 2026).
-[^6]: Georgetown CSET, [*Cybersecurity Risks of AI-Generated Code*](https://cset.georgetown.edu/publication/cybersecurity-risks-of-ai-generated-code/) and [*Key Takeaways*](https://cset.georgetown.edu/wp-content/uploads/CSET-Key-Takeaways-Cybersecurity-Risks-of-AI-Generated-Code.pdf) (2024).
-[^7]: Spracklen et al., [*We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs*](https://arxiv.org/abs/2406.10279) (USENIX Security 2025 / arXiv 2024).
+[^3]: GitHub, [*GitHub found 39M secret leaks in 2024*](https://github.blog/security/application-security/next-evolution-github-advanced-security/) (Apr 2025).
+[^4]: Veracode, [*We Asked 100+ AI Models to Write Code*](https://www.veracode.com/blog/genai-code-security-report/) (Jul 2025).
+[^5]: Veracode, [*Spring 2026 GenAI Code Security Update*](https://www.veracode.com/blog/spring-2026-genai-code-security/) (Mar 2026).
+[^6]: Georgetown CSET, [*Cybersecurity Risks of AI-Generated Code*](https://cset.georgetown.edu/publication/cybersecurity-risks-of-ai-generated-code/) (2024).
+[^7]: Spracklen et al., [*A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs*](https://arxiv.org/abs/2406.10279) (USENIX Security 2025).
 [^8]: [*Debt Behind the AI Boom: A Large-Scale Empirical Study of AI-Generated Code in the Wild*](https://arxiv.org/html/2603.28592v1) (Mar 2026).
-

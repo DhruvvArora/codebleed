@@ -10,7 +10,7 @@ const SEVERITY_COLOR = {
 export default function HeroSection({
   onScan, loading, error, scanData, selectedPathId, onPathSelect, onViewReport,
 }) {
-  const [repoUrl, setRepoUrl] = useState("https://github.com/DhruvvArora/codebleed");
+  const [repoUrl, setRepoUrl] = useState("https://github.com/DhruvvArora/Omen");
 
   const handleSubmit = () => { if (repoUrl.trim()) onScan(repoUrl.trim()); };
   const handleKey = (e) => { if (e.key === "Enter") handleSubmit(); };
@@ -109,7 +109,7 @@ export default function HeroSection({
             </svg>
             <p style={styles.emptyHeading}>Attack paths will appear here</p>
             <p style={styles.emptyDesc}>
-              After scanning, CodeBleed maps your repo as a threat graph and surfaces
+              After scanning, Omen maps your repo as a threat graph and surfaces
               the most dangerous paths from entry points to sensitive assets.
             </p>
           </div>
